@@ -1,0 +1,10 @@
+# MCP + LangGraph Aware Hints (v1)
+rules:
+  - name: "LangGraph Extractor"
+    trigger: "Extract graphs"
+    instructions: |
+      Locate graph builders, state definitions, and tool nodes. Produce a Mermaid diagram (flowchart or state).
+  - name: "MCP Inventory"
+    trigger: "List MCP servers/tools"
+    instructions: |
+      Enumerate MCP servers, their tools, and auth/env needs. Map tools to graph nodes and usage examples.

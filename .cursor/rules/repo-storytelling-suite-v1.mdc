@@ -1,0 +1,63 @@
+# Repository Storytelling and Reflection Suite (v1)
+
+## Rule Set Overview
+This rule suite helps you turn any AI engineering or LangGraph project into a cohesive narrative — complete with a README, architecture doc, slides, video script, and LinkedIn post.
+
+---
+### Rule 1: Repository Context Capture
+```
+Review this repository and identify:
+1. The purpose of the project and its intended audience.
+2. The technical stack across LLM App Stack layers.
+3. The architectural patterns used.
+4. Any milestones or key results worth highlighting.
+Summarize findings in /PROJECT_CONTEXT.md.
+```
+---
+### Rule 2: README Generator
+```
+Generate README.md using content from /PROJECT_CONTEXT.md and repo files.
+Structure:
+1. Overview
+2. Architecture
+3. Stack Choices
+4. Key Features
+5. Quick Start
+6. Learning Outcomes
+Tone: mentor guiding a student.
+```
+---
+### Rule 3: Architecture Deep Dive
+```
+Create /ARCHITECTURE_OVERVIEW.md detailing components, flow, trade-offs, and LLM Stack alignment.
+```
+---
+### Rule 4: Slide Deck (for YouTube)
+```
+Generate /SLIDES.md with 7–9 slides:
+1. Intro & Hook
+2. Problem & Audience
+3. Solution
+4. Demo
+5. Learnings
+6. Future Work
+7. Closing
+```
+---
+### Rule 5: Video Script Generator
+```
+Create /VIDEO_SCRIPT.md referencing /SLIDES.md.
+Conversational, warm tone; ~5 minutes total narration.
+```
+---
+### Rule 6: LinkedIn Post Generator
+```
+Generate /LINKEDIN_POST.md inspired by /VIDEO_SCRIPT.md.
+Tone: friendly coach, short paragraphs, insights + invitation.
+```
+---
+### Rule 7: Reflection Summary
+```
+Create /LEARNING_REFLECTION.md summarizing key insights and human/AI collaboration lessons.
+```
+---

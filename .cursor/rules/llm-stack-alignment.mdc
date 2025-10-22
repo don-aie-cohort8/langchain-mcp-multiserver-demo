@@ -1,0 +1,7 @@
+# LLM Stack Alignment (v1)
+rules:
+  - name: "Stack Mapper"
+    trigger: "Map components to stack"
+    instructions: |
+      Map each component to layers: Data Pipelines, Embeddings, Vector DB, Orchestrator, APIs/Tools, Caches, Monitoring/Eval, Validators, UI/Hosting.
+      Fill a table in ARCHITECTURE_OVERVIEW.md.

@@ -1,0 +1,102 @@
+# Repository Storytelling and Reflection Suite (v2)
+# Purpose: Turn any repo into a coherent story: README → Architecture → Slides → 5‑min video script → LinkedIn post → Reflection.
+# Design: Plan→Generate→Review loop with explicit guardrails, tone, and file-scope constraints.
+# Usage: See ./prompts/quick-start.txt for one‑liners.
+
+rules:
+  - name: "Repository Context Capture"
+    trigger: "Generate /PROJECT_CONTEXT.md"
+    guardrails:
+      - "READ‑ONLY scan of repo; DO NOT modify code or config files."
+      - "Prefer facts from files over assumptions. If unknown, write TODOs."
+    instructions: |
+      1) Identify problem, target audience, and intended outcomes.
+      2) Map stack to LLM App Stack layers (LLM, Embedding, Orchestration, Vector DB, Monitoring, Evaluation, UI).
+      3) Detect patterns: LangGraph, MCP adapter, RAG, multi‑agent roles, data lineage, eval.
+      4) List key artifacts (entrypoints, graphs, prompts, datasets, workflows, CI).
+      5) Summarize milestones, experiments, results, and gaps.
+      6) Produce /PROJECT_CONTEXT.md using templates/PROJECT_CONTEXT_TEMPLATE.md if present.
+
+  - name: "README Generator"
+    trigger: "Generate README.md"
+    depends_on: ["Repository Context Capture"]
+    guardrails:
+      - "Tone: coach + peer, concise, actionable. Avoid hype."
+      - "Include Quickstart that actually runs; validate file paths."
+    instructions: |
+      Compose README.md with sections: Overview, Architecture (diagram or pseudo‑diagram), Stack Choices (and why),
+      Key Features, Quick Start (commands), Demo (if any), Learning Outcomes, Roadmap. Use templates/README_TEMPLATE.md if present.
+
+  - name: "Architecture Deep Dive"
+    trigger: "Generate /ARCHITECTURE_OVERVIEW.md"
+    depends_on: ["Repository Context Capture"]
+    guardrails:
+      - "Explain HOW it works; minimal prose, use tables/diagrams."
+      - "Call out decisions, trade‑offs, and risks; note future work."
+    instructions: |
+      Include: Components & Roles, Data & Control Flow, Graph nodes/edges (LangGraph), Tooling (MCP servers, retrievers),
+      Observability (LangSmith/Phoenix), Config & Secrets strategy, Deployment options. Align each component to LLM Stack layers.
+      Use templates/ARCHITECTURE_OVERVIEW_TEMPLATE.md if present.
+
+  - name: "Slide Deck"
+    trigger: "Generate /SLIDES.md"
+    depends_on: ["README Generator","Architecture Deep Dive"]
+    guardrails:
+      - "7–9 slides; bullets under 8 words where possible."
+      - "Each slide includes: goal → evidence → takeaway."
+    instructions: |
+      Slides: 1) Title/Hook, 2) Problem/Audience, 3) Solution Architecture, 4) Demo Highlights,
+      5) Results/Learnings, 6) Guardrails & Risk, 7) What’s Next, 8) Thank you (optional).
+      Use templates/SLIDES_TEMPLATE.md if present.
+
+  - name: "Video Script Generator"
+    trigger: "Generate /VIDEO_SCRIPT.md"
+    depends_on: ["Slide Deck"]
+    guardrails:
+      - "Target < 5 minutes (~650–800 words)."
+      - "Coach/friend tone. Add [SCREEN], [DEMO], [CUT] cues."
+    instructions: |
+      For each slide, write 30–40 seconds of narration. Include hooks, transitions, and a short CTA.
+      Use templates/VIDEO_SCRIPT_TEMPLATE.md if present.
+
+  - name: "LinkedIn Post Generator"
+    trigger: "Generate /LINKEDIN_POST.md"
+    depends_on: ["Video Script Generator"]
+    guardrails:
+      - "Max ~5 short paragraphs; friendly coach tone; no brag."
+      - "Include one question inviting peer experiences."
+    instructions: |
+      Convert video script to post: Hook → 2–3 takeaways → Reflection → Invite discussion → Link to repo/video.
+      Use templates/LINKEDIN_POST_TEMPLATE.md if present.
+
+  - name: "Reflection Summary"
+    trigger: "Generate /LEARNING_REFLECTION.md"
+    depends_on: ["LinkedIn Post Generator"]
+    guardrails:
+      - "Capture human/AI collaboration lessons and guardrails."
+      - "Tie to bootcamp learning objectives; include TODOs with owners."
+    instructions: |
+      Summarize: skills demonstrated, evaluation insights, migration patterns (0.x→1.x), risks mitigated, next sprint items.
+      Use templates/LEARNING_REFLECTION_TEMPLATE.md if present.
+
+  # --- Scope & Safety ---
+  - name: "Scope Guardrails (pre‑commit)"
+    trigger: "Limit changes to allowed paths"
+    guardrails:
+      - "Only write to: README.md, /PROJECT_CONTEXT.md, /ARCHITECTURE_OVERVIEW.md, /SLIDES.md, /VIDEO_SCRIPT.md, /LINKEDIN_POST.md, /LEARNING_REFLECTION.md, /docs/**, /templates/**"
+      - "Never edit src/ unless explicitly asked. If needed, open a PR with rationale."
+    instructions: |
+      Before writing, validate changed file list using scripts/verify_changed_files.sh with ALLOWED_PATHS.
+      If violations, abort and output a diff summary plus a remediation checklist.
+
+  - name: "MCP & LangGraph Context Assist"
+    trigger: "Enrich context with MCP/LangGraph details"
+    instructions: |
+      If repo includes MCP servers/clients or LangGraph graphs, extract graph nodes, edges, and tool bindings.
+      Identify sub‑agents (Architect vs Developer), routing criteria, and human‑in‑the‑loop checkpoints.
+
+
+
+# Allowed Paths Note
+# All generation rules must respect scripts/allowed_paths.txt.
+# If a target path is outside this list, write a TODO and request confirmation instead of writing.
