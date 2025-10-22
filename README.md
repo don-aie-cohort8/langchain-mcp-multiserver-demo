@@ -5,7 +5,7 @@
 This guide demonstrates how to use the LangChain MCP adapters with multiple custom servers,
 including configuration, tool discovery, and agent orchestration.
 
-**Project:** `aie8-s13-langchain-mcp`
+**Project:** `langchain-mcp-multiserver-demo`
 **Focus:** Educational demonstration of MCP integration patterns
 
 ## Quick Start
