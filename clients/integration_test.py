@@ -4,8 +4,8 @@ MCP Multi-Server Client Integration Test Suite
 PURPOSE:
 ========
 This standalone script demonstrates and tests the complete MCP (Model Context Protocol)
-workflow with multiple servers, showcasing real-world patterns for building LLM agents
-that integrate tools from different services.
+workflow with multiple servers, showcasing reference patterns for building LLM agents
+with MCP that integrate tools from different services.
 
 EDUCATIONAL VALUE:
 ==================
@@ -13,11 +13,11 @@ EDUCATIONAL VALUE:
 2. Tool Discovery: Demonstrates dynamic tool loading from heterogeneous services
 3. Agent Orchestration: Tests LLM's ability to reason about and invoke multiple tools
 4. Response Formatting: Illustrates various output display patterns for different use cases
-5. Error Handling: Validates graceful degradation when servers are unavailable
+5. Response Patterns: Demonstrates different output modes for various use cases
 
 WHAT THIS TESTS:
 ================
-- Connection pooling: Simultaneous connections to math and weather services
+- Multi-server connections: Connects to multiple MCP servers concurrently
 - Tool enumeration: Dynamic discovery of available capabilities
 - Multi-step reasoning: Agent chains multiple tool calls to solve problems
 - State management: Intermediate results flow between tool invocations
@@ -28,7 +28,7 @@ COMPARISON TO NOTEBOOK:
 While client.ipynb provides an interactive learning environment, this script:
 - Runs end-to-end without user interaction (suitable for CI/CD)
 - Tests all display_utils features systematically
-- Serves as reference implementation for production applications
+- Serves as reference starting point for production applications
 - Provides reproducible test cases for MCP server validation
 
 PREREQUISITES:
@@ -72,8 +72,8 @@ async def main():
 
     SETUP PHASE:
     - Establishes HTTP connections to multiple MCP servers
-    - Tests server discovery and health checks
-    - Validates tool enumeration across heterogeneous services
+    - Loads tools from configured MCP servers
+    - Displays available tools across heterogeneous services
     """
     print("\n" + "=" * 70)
     print("LANGCHAIN MCP CLIENT EXAMPLE")
@@ -122,7 +122,7 @@ async def main():
     - Agent should call add(15, 27) first, getting 42
     - Agent should then call multiply(42, 3), getting 126
     - display_agent_response should show all intermediate steps
-    - Token usage should be displayed for each AI message
+    - Token usage will be displayed when available in response metadata
 
     VALUE:
     - Validates ReAct agent reasoning loop

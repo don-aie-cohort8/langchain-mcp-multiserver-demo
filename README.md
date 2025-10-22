@@ -5,8 +5,8 @@
 This guide demonstrates how to use the LangChain MCP adapters with multiple custom servers,
 including configuration, tool discovery, and agent orchestration.
 
-**Project:** `langchain-mcp-multiserver-demo`
-**Focus:** Educational demonstration of production-ready MCP patterns
+**Project:** `aie8-s13-langchain-mcp`
+**Focus:** Educational demonstration of MCP integration patterns
 
 ## Quick Start
 
@@ -75,9 +75,22 @@ python servers/langchain_tools_server.py --host 0.0.0.0 --port 9000
 Simple weather MCP server using FastMCP.
 
 **Features:**
+- Accepts `--port` and `--host` command-line arguments
 - Runs on port 8000 by default
 - Provides `get_weather` tool
-- Returns mock weather data
+- Returns mock weather data for requested location
+
+**Usage:**
+```bash
+# Default (127.0.0.1:8000)
+python servers/weather_server.py
+
+# Custom port
+python servers/weather_server.py --port 8080
+
+# Custom host and port
+python servers/weather_server.py --host 0.0.0.0 --port 9000
+```
 
 ## Display Utilities
 
