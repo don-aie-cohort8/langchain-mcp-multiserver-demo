@@ -100,7 +100,7 @@ if __name__ == "__main__":
 **Server side (manual startup required):**
 ```bash
 # Terminal 1
-python servers/langchain_tools_server.py --port 8001
+python servers/wrap_langchain_tools_server.py --port 8001
 ```
 
 **Client side:**

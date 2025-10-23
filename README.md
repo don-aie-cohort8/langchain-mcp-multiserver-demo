@@ -25,7 +25,7 @@ python servers/weather_server.py
 ```bash
 cd /home/donbr/don-aie-cohort8/aie8-s13-langchain-mcp
 source .venv/bin/activate
-python servers/langchain_tools_server.py --port 8001
+python servers/wrap_langchain_tools_server.py --port 8001
 ```
 
 **Terminal 3 - Streamable HTTP (port 3000):**
@@ -44,11 +44,11 @@ INFO:     Started server process...
 
 ### 2. Use the Client (in Jupyter Notebook)
 
-Open [`client.ipynb`](clients/client.ipynb)
+Open [`langchain_mcp_adapter_client.ipynb`](clients/langchain_mcp_adapter_client.ipynb)
 
 ## Server Configuration
 
-### langchain_tools_server.py
+### wrap_langchain_tools_server.py
 
 This server converts LangChain tools to MCP format using FastMCP.
 
@@ -61,13 +61,13 @@ This server converts LangChain tools to MCP format using FastMCP.
 **Usage:**
 ```bash
 # Default (127.0.0.1:8001)
-python servers/langchain_tools_server.py
+python servers/wrap_langchain_tools_server.py
 
 # Custom port
-python servers/langchain_tools_server.py --port 8002
+python servers/wrap_langchain_tools_server.py --port 8002
 
 # Custom host and port
-python servers/langchain_tools_server.py --host 0.0.0.0 --port 9000
+python servers/wrap_langchain_tools_server.py --host 0.0.0.0 --port 9000
 ```
 
 ### weather_server.py
@@ -210,7 +210,7 @@ ERROR: [Errno 98] error while attempting to bind on address ('127.0.0.1', 8000):
 **Solution:**
 - Check if a server is already running: `lsof -i :8000`
 - Kill the process: `kill -9 <PID>`
-- Or use a different port: `python servers/langchain_tools_server.py --port 8002`
+- Or use a different port: `python servers/wrap_langchain_tools_server.py --port 8002`
 
 ### Connection Closed Error
 
@@ -264,16 +264,16 @@ RuntimeError: Already running asyncio in this thread
 
 ## Files
 
-- `langchain_tools_server.py` - Converts LangChain tools to MCP format
+- `wrap_langchain_tools_server.py` - Converts LangChain tools to MCP format
 - `weather_server.py` - Example weather MCP server
 - `math_server.py` - Example math MCP server (stdio transport)
 - `display_utils.py` - Formatting utilities for agent responses
 - `integration_test.py` - Complete working example
-- `client.ipynb` - Jupyter notebook with various examples
+- `langchain_mcp_adapter_client.ipynb` - Jupyter notebook with various examples
 
 ## Next Steps
 
-1. Add more tools to `langchain_tools_server.py`
+1. Add more tools to `wrap_langchain_tools_server.py`
 2. Create custom display formats in `display_utils.py`
 3. Build your own MCP servers for different domains
 4. Integrate with LangGraph for complex workflows

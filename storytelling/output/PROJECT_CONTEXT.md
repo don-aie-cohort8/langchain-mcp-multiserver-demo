@@ -27,9 +27,9 @@
 
 - **Key Artifacts:** 
   - `servers/weather_server.py` - Mock weather MCP server (streamable-http)
-  - `servers/langchain_tools_server.py` - LangChain tools converted to MCP format
+  - `servers/wrap_langchain_tools_server.py` - LangChain tools converted to MCP format
   - `servers/math_server.py` - Math operations MCP server (stdio)
-  - `clients/client.ipynb` - Interactive learning notebook
+  - `clients/langchain_mcp_adapter_client.ipynb` - Interactive learning notebook
   - `clients/display_utils.py` - Agent response formatting utilities
   - `clients/integration_test.py` - Complete working example
   - `pyproject.toml` - Project dependencies and configuration

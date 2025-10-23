@@ -25,7 +25,7 @@ WHAT THIS TESTS:
 
 COMPARISON TO NOTEBOOK:
 =======================
-While client.ipynb provides an interactive learning environment, this script:
+While langchain_mcp_adapter_client.ipynb provides an interactive learning environment, this script:
 - Runs end-to-end without user interaction (suitable for CI/CD)
 - Tests all display_utils features systematically
 - Serves as reference starting point for production applications
@@ -34,7 +34,7 @@ While client.ipynb provides an interactive learning environment, this script:
 PREREQUISITES:
 ==============
 1. Start the langchain_tools_server in a separate terminal:
-   python servers/langchain_tools_server.py --port 8001
+   python servers/wrap_langchain_tools_server.py --port 8001
 
 2. Start the weather server in another terminal:
    python servers/weather_server.py

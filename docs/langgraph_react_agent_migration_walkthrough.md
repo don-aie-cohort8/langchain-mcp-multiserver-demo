@@ -3,7 +3,9 @@
 
 ### The Story Arc
 
-This demo showcases the value of simplicity and the power of the `integration_test.py` script while demonstrating real-world engineering: handling breaking changes in production dependencies.
+Here's a shorter version that covers that captures the migration process from LangGraph's `create_react_agent` to the LangChain `library create_agent`.
+
+- [langchain-mcp-multiserver-demo/commit](https://github.com/don-aie-cohort8/langchain-mcp-multiserver-demo/commit/1267d535f526bcf7cdd8bf61846b1f12adcfc1f2)
 
 ### Demo Flow
 
@@ -22,7 +24,7 @@ This demo showcases the value of simplicity and the power of the `integration_te
    ```bash
    cd /home/donbr/don-aie-cohort8/aie8-s13-langchain-mcp
    source .venv/bin/activate
-   python servers/langchain_tools_server.py --port 8001
+   python servers/wrap_langchain_tools_server.py --port 8001
    ```
 
    NOTE:  the third option from the README.md is the cool kid on the block, but out of scope for this walkthrough.
@@ -65,16 +67,21 @@ dependencies = [
 **After (LangGraph v1.0+):**
 ```toml
 dependencies = [
-    "langchain==0.3.19",
-    "langgraph==0.6.7",
-    "langchain-openai>=0.3.7",
+    "langchain>=1.0.0",
+    "langgraph>=1.0.0",
+    "langchain-openai>=1.0.0",
     # ... other deps
 ]
 ```
 
 Command used:
+
 ```bash
-uv add "langchain>=0.3.19" "langgraph>=0.6.7" "langchain-openai>=0.3.7"
+uv sync --refresh --reinstall
+```
+
+```bash
+uv add "langchain>=1.0.0" "langgraph>=1.0.0" "langchain-openai>=1.0.0"
 ```
 
 ### 2. Import Statement (integration_test.py line 57)
@@ -165,9 +172,9 @@ agent = create_agent("openai:gpt-4.1", tools)
 
 ### Unchanged
 - `servers/weather_server.py` - No changes needed
-- `servers/langchain_tools_server.py` - No changes needed
+- `servers/wrap_langchain_tools_server.py` - No changes needed
 - `clients/display_utils.py` - No changes needed
-- `clients/client.ipynb` - Intentionally not updated for this demo
+- `clients/langchain_mcp_adapter_client.ipynb` - Intentionally not updated for this demo
 
 ---
 

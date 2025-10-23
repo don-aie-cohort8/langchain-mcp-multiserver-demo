@@ -61,7 +61,7 @@ agent = create_agent("openai:gpt-4.1", tools)
    - Line 109: Replaced `create_react_agent` with `create_agent`
 
 ### Jupyter Notebooks
-3. **clients/client.ipynb**
+3. **clients/langchain_mcp_adapter_client.ipynb**
    - Updated 7 code cells with the new import and function signature
    - Cells affected: `1b57c677`, `9ce182a8`, `38e13376`, `94cbb9a2`, `b1bf4b9a`, `c9472949`, `ddebfeda`
 

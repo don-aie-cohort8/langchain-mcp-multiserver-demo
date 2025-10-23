@@ -16,12 +16,12 @@ Educational repository demonstrating Model Context Protocol (MCP) integration wi
 
 ```
 ├── servers/                    # MCP server implementations
-│   ├── langchain_tools_server.py  # LangChain tools → MCP (port 8001)
+│   ├── wrap_langchain_tools_server.py  # LangChain tools → MCP (port 8001)
 │   ├── weather_server.py          # Weather API mock (port 8000)
 │   └── math_server.py             # stdio transport example
 ├── clients/                    # Client code and utilities
 │   ├── integration_test.py        # Automated test suite
-│   ├── client.ipynb               # Interactive examples
+│   ├── langchain_mcp_adapter_client.ipynb  # Interactive examples
 │   └── display_utils.py           # Response formatting utilities
 ├── docs/
 │   └── TRANSPORT_COMPARISON.md    # stdio vs streamable-http guide
@@ -37,7 +37,7 @@ Educational repository demonstrating Model Context Protocol (MCP) integration wi
 ```
 
 **Key Teaching Files:**
-- `servers/langchain_tools_server.py` — Demonstrates LangChain → MCP tool conversion
+- `servers/wrap_langchain_tools_server.py` — Demonstrates LangChain → MCP tool conversion
 - `clients/integration_test.py` — Complete working example with all display modes
 - `clients/display_utils.py` — Reusable response formatting (import this in your code)
 - `docs/TRANSPORT_COMPARISON.md` — When to use stdio vs streamable-http
@@ -75,10 +75,10 @@ python servers/weather_server.py
 
 # Terminal 2 - LangChain Tools Server (port 8001)
 source .venv/bin/activate
-python servers/langchain_tools_server.py --port 8001
+python servers/wrap_langchain_tools_server.py --port 8001
 
 # Custom port/host options
-python servers/langchain_tools_server.py --port 8002 --host 0.0.0.0
+python servers/wrap_langchain_tools_server.py --port 8002 --host 0.0.0.0
 ```
 
 ### Running Client Examples
@@ -90,7 +90,7 @@ python clients/integration_test.py
 
 # Jupyter notebook
 source .venv/bin/activate
-jupyter notebook clients/client.ipynb
+jupyter notebook clients/langchain_mcp_adapter_client.ipynb
 ```
 
 ### Port Management
@@ -118,7 +118,7 @@ This repository demonstrates components across multiple LLM application stack la
 | **Caches** | N/A |
 | **Monitoring/Eval** | LangSmith tracing (optional), display_utils.py for response inspection |
 | **Validators** | N/A (could be added to tool inputs/outputs) |
-| **UI/Hosting** | Jupyter notebooks (client.ipynb), Python scripts |
+| **UI/Hosting** | Jupyter notebooks (langchain_mcp_adapter_client.ipynb), Python scripts |
 
 **Key Focus:** This project primarily demonstrates the **Orchestrator** and **APIs/Tools** layers through MCP multi-server integration with LangGraph.
 
@@ -132,7 +132,7 @@ This repository demonstrates components across multiple LLM application stack la
 ```bash
 # Separate terminal for each server
 python servers/weather_server.py          # Port 8000
-python servers/langchain_tools_server.py  # Port 8001
+python servers/wrap_langchain_tools_server.py  # Port 8001
 ```
 
 **Client Connection Pattern:**
@@ -161,7 +161,7 @@ client = MultiServerMCPClient({
 - Cannot run in Jupyter (asyncio conflict)
 - Good for: CLI tools, single-user applications
 
-**streamable-http Transport** (`weather_server.py`, `langchain_tools_server.py`):
+**streamable-http Transport** (`weather_server.py`, `wrap_langchain_tools_server.py`):
 - Server runs independently as HTTP service
 - Multiple concurrent client connections
 - Network-accessible
@@ -199,7 +199,7 @@ tools = await client.get_tools()
 
 ### 3. LangChain → MCP Tool Conversion
 
-Pattern demonstrated in `langchain_tools_server.py`:
+Pattern demonstrated in `wrap_langchain_tools_server.py`:
 
 ```python
 from langchain_core.tools import tool
@@ -215,8 +215,8 @@ def my_tool(param: str) -> str:
 fastmcp_tool = to_fastmcp(my_tool)
 
 # Create and run server
-mcp = FastMCP("Server Name", tools=[fastmcp_tool])
-mcp.run(transport="streamable-http", host="127.0.0.1", port=8001)
+mcp = FastMCP("Server Name", tools=[fastmcp_tool], host="127.0.0.1", port=8001)
+mcp.run(transport="streamable-http")
 ```
 
 **When to Create New Servers:**
@@ -226,7 +226,7 @@ mcp.run(transport="streamable-http", host="127.0.0.1", port=8001)
 
 **Port Assignment Convention:**
 - `8000` — weather_server.py
-- `8001` — langchain_tools_server.py
+- `8001` — wrap_langchain_tools_server.py
 - `8002+` — Your custom servers
 
 ### 4. LangGraph Agent Creation
@@ -255,6 +255,9 @@ response = await agent.ainvoke({"messages": "your query here"})
 - Agent automatically selects and chains tools based on query
 - Response includes full message trace (human → AI → tool → AI → ...)
 - Use display utilities to format the response
+
+**Note on integration_test.py:**
+The test file contains a placeholder for demonstrating different agent creation patterns. During demos, it switches between `create_agent` (placeholder) and `create_react_agent` (actual LangGraph function). When writing new code, always use `create_react_agent` from `langgraph.prebuilt`.
 
 ### 5. Display Utilities (clients/display_utils.py)
 
@@ -335,7 +338,7 @@ lsof -i :8001
 kill -9 <PID>
 
 # Or use a different port
-python servers/langchain_tools_server.py --port 8002
+python servers/wrap_langchain_tools_server.py --port 8002
 ```
 
 ### OPENAI_API_KEY not found
@@ -418,10 +421,10 @@ See **Cursor Integration** section below for detailed trigger commands.
    python servers/weather_server.py
 
    # Terminal 2
-   python servers/langchain_tools_server.py --port 8001
+   python servers/wrap_langchain_tools_server.py --port 8001
    ```
 3. **Run client code:**
-   - Interactive: `jupyter notebook clients/client.ipynb`
+   - Interactive: `jupyter notebook clients/langchain_mcp_adapter_client.ipynb`
    - Testing: `python clients/integration_test.py`
 4. **Verify output:** Use display utilities for formatted traces
 

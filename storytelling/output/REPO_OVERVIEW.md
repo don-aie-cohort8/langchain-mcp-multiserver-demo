@@ -56,10 +56,10 @@ uv sync
 python servers/weather_server.py
 
 # 3. Start the LangChain tools server (Terminal 2)  
-python servers/langchain_tools_server.py --port 8001
+python servers/wrap_langchain_tools_server.py --port 8001
 
 # 4. Open the learning notebook
-jupyter notebook clients/client.ipynb
+jupyter notebook clients/langchain_mcp_adapter_client.ipynb
 ```
 
 **Preconditions:** Python 3.13+, OpenAI API key in `.env` file  
