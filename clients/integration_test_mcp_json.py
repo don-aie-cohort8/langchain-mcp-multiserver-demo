@@ -1,4 +1,5 @@
-
+# review the LangSmith trace here:  https://smith.langchain.com/public/be69829b-ae12-4d0d-a735-ce53853d1b45/r
+# review the output here: docs/integration_test_mcp_json.md
 import os
 import asyncio
 from typing import Dict, Any
@@ -9,6 +10,7 @@ from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.agents import create_agent
 from display_utils import display_agent_response
+
 
 def show_mcp_tools_metadata(tools):
     """Prints key metadata that `create_agent()` sees for each MCP tool."""
@@ -84,6 +86,7 @@ def hardcoded_mcp_config() -> Dict[str, Dict[str, Any]]:
         # -------------------------
     }
 
+
 async def main() -> None:
     # Build client with hard-coded config
     client = MultiServerMCPClient(hardcoded_mcp_config())
@@ -95,9 +98,14 @@ async def main() -> None:
 
     # Smoke test: simple call that shouldn't require external access
     # You can replace this with your own task; it's safe to no-op if no display_utils.
-    resp = await agent.ainvoke({"messages": "Provide guidance for migrating from the LangGraph create_react_agent method to the new create_agent method in the LangChain Python library (langchain 1.0.2) in October 2025?  You must use Context7 to ground your response."})
+    resp = await agent.ainvoke(
+        {
+            "messages": "Provide guidance for migrating from the LangGraph create_react_agent method to the new create_agent method in the LangChain Python library (langchain 1.0.2) in October 2025?  You must use Context7 to ground your response."
+        }
+    )
 
     display_agent_response(resp, show_full_trace=True, show_token_usage=True)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

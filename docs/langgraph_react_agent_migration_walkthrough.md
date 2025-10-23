@@ -110,7 +110,7 @@ agent = create_react_agent("openai:gpt-4.1", tools)
 agent = create_agent("openai:gpt-4.1", tools)
 ```
 
-**Why:** Function renamed from `create_react_agent` to `create_agent` for simplicity.
+**Why:** Function renamed from `create_react_agent` to `create_agent` as part of the migration.
 
 ---
 
