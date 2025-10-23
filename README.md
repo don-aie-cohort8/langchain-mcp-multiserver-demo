@@ -30,7 +30,7 @@ python servers/langchain_tools_server.py --port 8001
 
 **Terminal 3 - Streamable HTTP (port 3000):**
 ```bash
-cd examples/servers/streamable-http-stateless/
+cd /home/donbr/don-aie-cohort8/aie8-s13-langchain-mcp/examples/servers/streamable-http-stateless/
 uv run mcp-simple-streamablehttp-stateless --port 3000
 ```
 

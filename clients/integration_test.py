@@ -54,9 +54,9 @@ python clients/integration_test.py
 import asyncio
 from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langgraph.prebuilt import create_react_agent
+# from langgraph.prebuilt import create_react_agent
 # will switch during demo to:
-# from langchain.agents import create_agent
+from langchain.agents import create_agent
 from display_utils import display_agent_response, get_final_answer, print_tools_summary
 
 # Load environment variables from .env file (OPENAI_API_KEY, etc.)
@@ -108,9 +108,9 @@ async def main():
 
     # Create agent with the tools
     # TESTS: LangGraph ReAct agent initialization with MCP tools
-    agent = create_react_agent("openai:gpt-4.1", tools)
+    # agent = create_react_agent("openai:gpt-4.1", tools)
     # will switch during demo to:
-    # agent = create_agent("openai:gpt-4.1", tools)
+    agent = create_agent("openai:gpt-4.1", tools)
 
     # =========================================================================
     # TEST CASE 1: Multi-Step Reasoning with Full Trace Display
