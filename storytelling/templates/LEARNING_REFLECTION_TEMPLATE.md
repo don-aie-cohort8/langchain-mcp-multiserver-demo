@@ -7,6 +7,9 @@
 - What required human review
 - Guardrails that mattered
 
+## 🤝 Human + AI Insight (optional)
+- <brief story about scope, trust, or iteration>
+
 ## Evaluation & Observability
 - <metrics, traces, dataset>
 

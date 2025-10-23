@@ -11,7 +11,7 @@ Explain the core idea in 2–3 sentences.
 - Who benefits from it?  
 - Why is it interesting right now?
 
-**Example:**  
+> 💡 **Example**  
 > This repo demonstrates how to connect multiple MCP servers using LangChain’s MCP adapter, showing a practical pattern for hybrid human–AI collaboration.
 
 ---
@@ -32,11 +32,11 @@ If you already generated `ARCHITECTURE_OVERVIEW.md`, summarize key insights here
 ## ⚙️ 3. Tech Stack
 | Layer | Component | Purpose |
 |--------|------------|----------|
-| LLM | `gpt-4o-mini` | Reasoning & generation |
-| Orchestration | `LangGraph` | Flow control / tool routing |
-| MCP | `FastMCP`, `LangChain MCP Adapter` | Tool integration |
-| Vector DB | `Qdrant` or `pgvector` | Semantic retrieval |
-| Monitoring | `LangSmith`, `Phoenix` | Observability & evaluation |
+| LLM | <> | Reasoning & generation |
+| Orchestration | <> | Flow control / tool routing |
+| MCP | <> | Tool integration |
+| Vector DB | <> | Semantic retrieval |
+| Monitoring | <> | Observability & evaluation |
 
 *(Adjust for your actual stack.)*
 
@@ -58,36 +58,27 @@ uv run langgraph dev --allow-blocking
 open http://localhost:8123
 ```
 
-Include clear preconditions (e.g., Python 3.11+, Docker, etc.) and how to verify success.
+Include clear preconditions and how to verify success.
 
 ---
 
 ## 📊 6. Learning Outcomes
-What concepts or skills does this repo teach?
-
-- Understanding multi-server MCP connections  
-- Using LangGraph reasoning loops effectively  
-- Designing safe human-in-the-loop workflows  
-- Documenting agentic systems with clarity
+- <outcome 1>
+- <outcome 2>
+- <outcome 3>
 
 ---
 
 ## 🧭 7. Roadmap
 | Milestone | Status | Notes |
 |------------|---------|-------|
-| v1: Basic Integration | ✅ Done | Initial proof of concept |
-| v2: Template-driven storytelling | 🚧 In Progress | Student-facing |
-| v3: Add evaluation examples | ⏳ Planned | Integrate LangSmith traces |
+| v1 | ✅ | |
+| v2 | 🚧 | |
+| v3 | ⏳ | |
 
 ---
 
 ## 💡 8. Reflection
-Close with a short note on what you learned or what still feels unresolved.  
-Encourage curiosity and iteration.
+> Short note on what you learned or what still feels unresolved.
 
-> “This project showed me how structure, documentation, and intent can turn AI tools into learning partners.”
-
----
-
-**Next Step:**  
-Once this overview feels solid, generate your `ARCHITECTURE_OVERVIEW.md` to dive deeper into *how* it works.
+**Next Step:** generate `ARCHITECTURE_OVERVIEW.md` to dive deeper.

@@ -1,9 +1,18 @@
-**Migrating agents from simple loops to LangGraph — what surprised us**
+💬 Opening hook (relatable problem or vivid question)
+> <one sentence that earns the scroll>
 
-• One big shift: explicit graphs gave us reliability without losing speed.  
-• Guardrails weren’t optional — they made demos production‑ready.  
-• Human + AI pairing let us ship faster *and* safer.
+**What we built and why**
+- <concise + specific statement>
 
-If you’ve done a similar migration, what guardrail or workflow tip made the biggest difference for you?
+**3 things that surprised us**
+1) <insight 1>
+2) <insight 2>
+3) <insight 3>
+
+**Reflection**
+<what you learned building/shipping this; keep it human>
+
+**Question for you**
+What guardrail or workflow tip made the biggest difference for your migration?
 
 Repo + 5‑min video in the comments. #AIEngineering #LangGraph #MCP

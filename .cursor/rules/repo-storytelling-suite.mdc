@@ -12,18 +12,28 @@ globs:
   - "**/*.csv"
   - "**/*.txt"
   - "**/*.sh"
+  - "**/*.png"
+  - "**/*.jpg"
+  - "**/*.svg"
+  - "**/*.gif"
+  - "**/*.drawio"
+  - "**/*.mermaid"
+  - "**/*.html"
+  - "**/*.pdf"
 
 output_root: storytelling/output/
 templates_root: storytelling/templates/
 auto_create_dirs: true
 
 # Note: glob patterns determine READ context, not WRITE scope.
-# Generation still limited to storytelling/output/.
+# Generation is limited to storytelling/output/.
 
 global_instructions: |
   Always use a friendly, coaching tone.
-  Maintain continuity across generated artifacts.
+  Maintain continuity across generated artifacts; reuse phrasing where helpful.
   Use TODO: for missing info rather than skipping sections.
+  When reading .ipynb, prefer markdown cells for narrative/context.
+  Prefer concise bullets (~5–8 words) and short paragraphs.
 
 # Conventions:
 # - Outputs -> <output_root>/<FILENAME>.md
@@ -63,9 +73,10 @@ rules:
       Include: Overview, Architecture (diagram or pseudo-diagram), Stack Choices (and why),
       Key Features, Quick Start (runnable commands), Learning Outcomes, Roadmap.
       Pull facts from PROJECT_CONTEXT; keep steps accurate and minimal.
+      Ensure this complements the repo root README (do not overwrite root README).
 
       ERROR_HANDLING:
-      - If template missing, create standard README structure
+      - If template missing, create standard overview structure
       - If PROJECT_CONTEXT not available, scan repo directly
       - Always include installation and setup instructions
 
@@ -77,9 +88,9 @@ rules:
       TEMPLATE: <templates_root>/ARCHITECTURE_OVERVIEW_TEMPLATE.md
       OUTPUT: <output_root>/ARCHITECTURE_OVERVIEW.md
 
-      Include: components & roles; data & control flow; integration patterns;
+      Include: components & roles; data & control flow; integration patterns (LangGraph, MCP);
       observability/eval; config/secrets; deployment options;
-      decisions/trade-offs; risks & future work.
+      decisions/trade-offs; risks & future work; migration/version context if relevant.
 
       ERROR_HANDLING:
       - If template missing, create standard architecture doc structure
@@ -95,6 +106,7 @@ rules:
 
       Slides: 1) Title/Hook, 2) Problem/Audience, 3) Solution Architecture, 4) Demo Highlights,
       5) Results/Learnings, 6) Guardrails & Risk, 7) What's Next, 8) Links/Thanks.
+      Use visual cues like '🎯 Goal:' and '🧠 Takeaway:' to focus each slide.
       Bullets ~5–8 words; each slide = goal → evidence → takeaway.
 
       ERROR_HANDLING:
@@ -111,6 +123,7 @@ rules:
       OUTPUT: <output_root>/VIDEO_SCRIPT.md
 
       For each slide: ~30–40s narration. Use [SCREEN], [DEMO], [CUT] cues.
+      Include curricular continuity if applicable (e.g., 'builds on our LangGraph module').
       End with an authentic reflection + CTA to share/ask questions.
 
       ERROR_HANDLING:
@@ -126,7 +139,8 @@ rules:
       TEMPLATE: <templates_root>/LINKEDIN_POST_TEMPLATE.md
       OUTPUT: <output_root>/LINKEDIN_POST.md
 
-      Structure: Hook → 2–3 takeaways → Reflection → Invitation ("How did you handle X?") → Link.
+      Structure: Hook (relatable question or vivid pain) → 2–3 takeaways → Reflection → Invite discussion → Link.
+      Keep to ~5 short paragraphs with line breaks for scannability.
 
       ERROR_HANDLING:
       - If template missing, create standard LinkedIn post structure
@@ -142,7 +156,7 @@ rules:
       OUTPUT: <output_root>/LEARNING_REFLECTION.md
 
       Include: skills demonstrated; human/AI collaboration lessons; guardrails that mattered;
-      eval & observability notes; migration patterns; next sprint (owner → task → DoD).
+      eval & observability notes; migration/version patterns; next sprint (owner → task → DoD).
 
       ERROR_HANDLING:
       - If template missing, create standard reflection structure

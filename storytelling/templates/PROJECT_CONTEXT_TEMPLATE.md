@@ -5,4 +5,15 @@
 - **Patterns:** (LangGraph, MCP, RAG, multi‑agent, retrieval strategies)
 - **Key Artifacts:** (entrypoints, graphs, prompts, datasets, CI, configs)
 - **Milestones/Results:** (what worked / didn’t)
-- **Gaps & TODOs:** (open questions, risks)
+
+## Gaps & TODOs
+### Reliability
+- TODO:
+### Security & Compliance
+- TODO:
+### Scalability & Performance
+- TODO:
+### Observability & Evaluation
+- TODO:
+### Developer Experience
+- TODO:

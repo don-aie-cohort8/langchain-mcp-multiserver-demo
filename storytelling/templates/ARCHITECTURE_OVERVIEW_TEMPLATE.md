@@ -31,9 +31,14 @@ flowchart LR
 - Metrics: <latency, correctness>
 - Testsets: <RAGAS etc.>
 
+## Migration / Version Context
+- Relevant versions (e.g., LangChain/LangGraph 1.x): <>
+- Notable breaking changes: <>
+- Before/After summary: <>
+- Upgrade path: <steps>
+
 ## Decisions & Trade‑offs
 - <decision>: reason, alternatives
 
 ## Risks & Future Work
 - Risk: mitigation
-- Upgrade path:

@@ -104,6 +104,24 @@ lsof -i :8001
 kill -9 <PID>
 ```
 
+## LLM Application Stack Layers
+
+This repository demonstrates components across multiple LLM application stack layers:
+
+| **Layer** | **Components in This Project** |
+|-----------|-------------------------------|
+| **Data Pipelines** | N/A (mock data in weather_server.py) |
+| **Embeddings** | N/A (focus is on tool orchestration) |
+| **Vector DB** | N/A (not used in this demo) |
+| **Orchestrator** | LangGraph (create_react_agent), LangChain |
+| **APIs/Tools** | MCP servers (weather, math, langchain_tools), FastMCP |
+| **Caches** | N/A |
+| **Monitoring/Eval** | LangSmith tracing (optional), display_utils.py for response inspection |
+| **Validators** | N/A (could be added to tool inputs/outputs) |
+| **UI/Hosting** | Jupyter notebooks (client.ipynb), Python scripts |
+
+**Key Focus:** This project primarily demonstrates the **Orchestrator** and **APIs/Tools** layers through MCP multi-server integration with LangGraph.
+
 ## Key Architecture Patterns
 
 ### 0. Critical: Server Lifecycle Management
@@ -365,27 +383,29 @@ Configures MCP servers for external MCP clients (e.g., Claude Desktop):
 
 All dependencies managed via `uv` package manager (Python 3.13 required).
 
-## Documentation Generation
+## Documentation Generation Philosophy
 
-This repository includes a **Repository Storytelling Suite** in `.cursor/rules/` for automated documentation generation.
+This repository follows a **"Build • Ship • Share"** documentation workflow using the Repository Storytelling Suite.
 
-**AI Assistant Write Permissions (default allowed paths):**
-- Documentation files: `README.md`, `PROJECT_CONTEXT.md`, `ARCHITECTURE_OVERVIEW.md`, `SLIDES.md`, `VIDEO_SCRIPT.md`, `LINKEDIN_POST.md`, `LEARNING_REFLECTION.md`
-- Directories: `docs/`, `templates/`, `storytelling/`
+**Write Permissions:**
+- ✅ Documentation files: `README.md`, `PROJECT_CONTEXT.md`, `ARCHITECTURE_OVERVIEW.md`, `SLIDES.md`, `VIDEO_SCRIPT.md`, `LINKEDIN_POST.md`, `LEARNING_REFLECTION.md`
+- ✅ Directories: `docs/`, `storytelling/` (output and templates)
+- ❌ Code changes require explicit user approval
 
-**Code changes require explicit PR with rationale.**
+**Documentation Workflow:**
 
-### Documentation Rules (.cursor/rules/)
+The Storytelling Suite generates seven interconnected artifacts:
+1. **Project Context** → Foundation (WHY/WHAT)
+2. **Repo Overview** → Newcomer onboarding
+3. **Architecture Summary** → HOW it works (with LLM stack mapping + MCP/LangGraph diagrams)
+4. **Slides** → 5-minute presentation
+5. **Video Script** → Narration with screen cues
+6. **LinkedIn Post** → Social sharing
+7. **Learning Reflection** → Meta-learning and next sprint planning
 
-1. **llm-stack-alignment.mdc** — Maps components to LLM App Stack layers (Data Pipelines, Embeddings, Vector DB, Orchestrator, APIs/Tools, Monitoring/Eval)
-2. **mcp-langgraph-context.mdc** — Extracts LangGraph nodes/edges/state, MCP server/tool mappings
-3. **repo-storytelling-suite-v2.mdc** — Generates README, architecture docs, slides, video scripts, LinkedIn posts
+Each rule handles errors gracefully (missing templates, incomplete context) and maintains continuity across artifacts.
 
-### Quick Start Prompts (.cursor/prompts/)
-
-One-liner generation commands available in:
-- `quick-start.txt` — Fast documentation generation
-- Documentation suite templates for various formats
+See **Cursor Integration** section below for detailed trigger commands.
 
 ## Development Workflow
 
@@ -407,30 +427,54 @@ One-liner generation commands available in:
 
 ### Cursor Integration
 
-The `.cursor/` and `storytelling/` directories provide automated documentation generation:
+The `.cursor/` and `storytelling/` directories provide automated documentation generation using a **Repository Storytelling Suite**.
 
 **Cursor Rules** (`.cursor/rules/`):
-- `repo-storytelling-suite.mdc` — Main documentation generation workflow
-- `llm-stack-alignment.mdc` — Maps components to LLM stack layers
-- `mcp-langgraph-context.mdc` — Extracts LangGraph/MCP architecture details
 
-**Quick Start Prompts** (`.cursor/prompts/quick-start.txt`):
-Run the Storytelling Suite with these commands:
-1. "Generate project context doc"
-2. "Generate repo overview"
-3. "Generate architecture summary"
-4. "Generate presentation slides"
-5. "Generate video script"
-6. "Generate LinkedIn post"
-7. "Generate learning reflection"
+1. **repo-storytelling-suite.mdc** — Template-aware documentation generation workflow
+   - Natural language triggers (no file paths needed)
+   - Dependency-based rule chaining
+   - Automatic output directory creation (`storytelling/output/`)
+   - Error handling with graceful degradation
 
-All outputs are saved to `storytelling/output/`
+2. **llm-stack-alignment.mdc** — LLM application stack mapping
+   - Maps components to layers: Data Pipelines, Embeddings, Vector DB, Orchestrator, APIs/Tools, Caches, Monitoring/Eval, Validators, UI/Hosting
+   - Generates stack alignment tables in ARCHITECTURE_OVERVIEW.md
+   - Validates component categorization
+
+3. **mcp-langgraph-context.mdc** — MCP and LangGraph pattern extraction
+   - Analyzes graph nodes, state definitions, and tool bindings
+   - Generates Mermaid diagrams (flowchart and state)
+   - Documents MCP server inventory and tool mappings
+   - Extracts integration patterns and error handling strategies
+
+**Storytelling Suite Triggers** (use in Cursor chat):
+
+Execute in sequence for complete documentation:
+1. **"Generate project context doc"** → `PROJECT_CONTEXT.md`
+2. **"Generate repo overview"** → `REPO_OVERVIEW.md` (complements root README)
+3. **"Generate architecture summary"** → `ARCHITECTURE_OVERVIEW.md` (includes stack mapping + MCP/LangGraph diagrams)
+4. **"Generate presentation slides"** → `SLIDES.md` (7-9 slides, <5 min presentation)
+5. **"Generate video script"** → `VIDEO_SCRIPT.md` (650-800 words, includes [SCREEN]/[DEMO] cues)
+6. **"Generate LinkedIn post"** → `LINKEDIN_POST.md` (conversational, invites discussion)
+7. **"Generate learning reflection"** → `LEARNING_REFLECTION.md` (meta-learning, next sprint TODOs)
+
+**Tone:** Coaching, peer-friendly; favors concise bullets (~5-8 words) and short paragraphs.
+
+All outputs automatically saved to `storytelling/output/`
 
 **Templates** (`storytelling/templates/`):
-- README_TEMPLATE.md
-- ARCHITECTURE_OVERVIEW_TEMPLATE.md
-- PROJECT_CONTEXT_TEMPLATE.md
-- SLIDES_TEMPLATE.md
-- VIDEO_SCRIPT_TEMPLATE.md
-- LINKEDIN_POST_TEMPLATE.md
-- LEARNING_REFLECTION_TEMPLATE.md
+Templates provide structure when available; if missing, rules use built-in outlines:
+- `REPO_OVERVIEW_TEMPLATE.md`
+- `ARCHITECTURE_OVERVIEW_TEMPLATE.md`
+- `PROJECT_CONTEXT_TEMPLATE.md`
+- `SLIDES_TEMPLATE.md`
+- `VIDEO_SCRIPT_TEMPLATE.md`
+- `LINKEDIN_POST_TEMPLATE.md`
+- `LEARNING_REFLECTION_TEMPLATE.md`
+
+**Key Features:**
+- Dependency-aware: Rules execute in order, reusing earlier outputs
+- Error resilient: Missing templates/outputs trigger graceful fallbacks
+- Context-rich: Reads notebooks (.ipynb), scripts, configs, images for comprehensive docs
+- Continuity: Maintains consistent phrasing across artifacts
