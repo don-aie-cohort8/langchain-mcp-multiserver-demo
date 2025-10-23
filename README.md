@@ -21,7 +21,7 @@ source .venv/bin/activate
 python servers/weather_server.py
 ```
 
-**Terminal 2 - LangChain Tools Server (port 8001):**
+**Terminal 2 - LangChain Math Tools Server (port 8001):**
 ```bash
 cd /home/donbr/don-aie-cohort8/aie8-s13-langchain-mcp
 source .venv/bin/activate
