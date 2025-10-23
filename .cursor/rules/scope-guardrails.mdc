@@ -1,8 +1,0 @@
-# Scope Guardrails (v1)
-rules:
-  - name: "Preflight Scope Check"
-    trigger: "Preflight scope"
-    instructions: |
-      1) Read scripts/verify_changed_files.sh and .github/PULL_REQUEST_TEMPLATE.md.
-      2) Refuse to write outside ALLOWED_PATHS. If a user requests broader scope, ask for confirmation.
-      3) If uncertain, propose a plan and request which paths to allow.

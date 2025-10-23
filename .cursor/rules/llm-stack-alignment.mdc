@@ -1,7 +1,83 @@
-# LLM Stack Alignment (v1)
-rules:
-  - name: "Stack Mapper"
-    trigger: "Map components to stack"
-    instructions: |
-      Map each component to layers: Data Pipelines, Embeddings, Vector DB, Orchestrator, APIs/Tools, Caches, Monitoring/Eval, Validators, UI/Hosting.
-      Fill a table in ARCHITECTURE_OVERVIEW.md.
+---
+description: "Ensures proper alignment and mapping of LLM stack components across different layers for architecture documentation"
+globs:
+  - "**/*.py"
+  - "**/*.md"
+  - "**/*.yaml"
+  - "**/*.yml"
+  - "**/*.json"
+  - "**/storytelling/**/*.md"
+alwaysApply: false
+version: "1.2.0"
+output_root: storytelling/output/
+templates_root: storytelling/templates/
+---
+
+# LLM Stack Alignment (v1.2)
+
+## Purpose
+This rule helps maintain clear alignment between LLM application components and their respective stack layers, ensuring proper documentation and architectural understanding.
+
+## Stack Layers
+- **Data Pipelines**: Data ingestion, processing, and transformation
+- **Embeddings**: Vector generation and embedding models
+- **Vector DB**: Vector storage and retrieval systems
+- **Orchestrator**: Workflow management and coordination (LangGraph, etc.)
+- **APIs/Tools**: External integrations and tool connections
+- **Caches**: Performance optimization and response caching
+- **Monitoring/Eval**: Observability, tracing, and evaluation systems
+- **Validators**: Input/output validation and safety checks
+- **UI/Hosting**: User interfaces and deployment infrastructure
+
+## Rules
+
+- name: "Stack Mapper"
+  trigger: "Map components to stack"
+  instructions: |
+    GOAL: Create a comprehensive mapping of all system components to their appropriate stack layers.
+    
+    When analyzing LLM applications:
+    1) Identify all components in the codebase
+    2) Map each component to its primary stack layer
+    3) Document the mapping in ARCHITECTURE_OVERVIEW.md using the provided table format
+    4) Include notes about component interactions and dependencies
+    5) Highlight any components that span multiple layers
+    
+    ERROR_HANDLING:
+    - If ARCHITECTURE_OVERVIEW.md doesn't exist, create it with the mapping table
+    - If component purpose is unclear, mark with TODO: for clarification
+    - Always include at least basic component-to-layer mapping
+
+- name: "Stack Validation"
+  trigger: "Validate stack alignment"
+  instructions: |
+    GOAL: Ensure all components are properly categorized and no orphaned components exist.
+    
+    Validation steps:
+    1) Verify each component maps to exactly one primary layer
+    2) Check for components that might be misaligned
+    3) Identify missing components in the mapping
+    4) Suggest improvements for better stack organization
+    
+    ERROR_HANDLING:
+    - Flag components that don't fit standard layers
+    - Suggest new layer categories if needed
+    - Always provide actionable recommendations
+
+- name: "Stack Integration with Storytelling"
+  trigger: "Generate architecture summary"
+  depends_on: ["Repository Context Capture"]
+  instructions: |
+    GOAL: Integrate LLM stack alignment with architecture documentation generation.
+    
+    When generating architecture summaries:
+    1) Use the stack mapping to inform ARCHITECTURE_OVERVIEW.md generation
+    2) Ensure stack layers are properly documented in the architecture doc
+    3) Cross-reference with existing PROJECT_CONTEXT.md for consistency
+    4) Include stack alignment table in the architecture overview
+    5) Highlight any misaligned or unclear component mappings
+    
+    ERROR_HANDLING:
+    - If stack mapping is incomplete, mark with TODO: for completion
+    - Always include at least basic stack layer documentation
+    - Ensure consistency with project context and repo overview

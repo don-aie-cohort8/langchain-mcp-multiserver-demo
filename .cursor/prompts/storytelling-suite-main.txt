@@ -1,8 +1,0 @@
-Generate the README, architecture overview, slides, and video script using the “Repository Storytelling and Reflection Suite (v1)” rules.
-Scan the repo to capture its purpose, architecture, and stack context.
-Use a coaching, peer-friendly tone fit for a 5-minute YouTube walkthrough.
-Output:
-- README.md
-- ARCHITECTURE_OVERVIEW.md
-- SLIDES.md
-- VIDEO_SCRIPT.md

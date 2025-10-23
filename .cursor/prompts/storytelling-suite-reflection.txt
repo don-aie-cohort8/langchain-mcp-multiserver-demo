@@ -1,5 +1,0 @@
-Generate the LinkedIn post and learning reflection using the “Repository Storytelling and Reflection Suite (v1)” rules.
-Use an encouraging, conversational tone focused on lessons learned and insights for peers in the AI engineering community.
-Output:
-- LINKEDIN_POST.md
-- LEARNING_REFLECTION.md

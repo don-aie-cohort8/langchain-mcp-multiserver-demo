@@ -1,11 +1,15 @@
-Generate the README, architecture overview, slides, video script, LinkedIn post, and learning reflection
-using the “Repository Storytelling and Reflection Suite (v2)” rules.
-Use a coaching, peer-friendly tone; target video < 5 minutes.
-Triggers to run in order:
-1) Generate /PROJECT_CONTEXT.md
-2) Generate README.md
-3) Generate /ARCHITECTURE_OVERVIEW.md
-4) Generate /SLIDES.md
-5) Generate /VIDEO_SCRIPT.md
-6) Generate /LINKEDIN_POST.md
-7) Generate /LEARNING_REFLECTION.md
+Run the Storytelling Suite in Cursor.
+
+Suggested sequence:
+1) Generate project context doc
+2) Generate repo overview
+3) Generate architecture summary
+4) Generate presentation slides
+5) Generate video script
+6) Generate LinkedIn post
+7) Generate learning reflection
+
+Tone: coaching, peer-friendly. Target video <5 minutes.
+All outputs are automatically written to the `storytelling/output` folder.
+
+Note: The suite reads context from notebooks, data files, scripts, and configs to provide richer documentation.
