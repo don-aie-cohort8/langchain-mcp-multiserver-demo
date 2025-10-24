@@ -58,8 +58,6 @@ flowchart LR
 | **sequential-thinking** | Stepwise reasoning & planning | `sequentialthinking`, `plan_steps` |
 | **Context7 Docs Server** | Documentation grounding across 40+ ecosystems (LangChain, OpenAI, Next.js, Redis, Hugging Face, etc.) | `resolve-library-id`, `get-library-docs` |
 
-> 💡 *Context7 isn’t a calendar API — it’s a DocsRAG-style retriever for structured, version-linked technical documentation.*
-
 ---
 
 ## 🏗 Architecture Pillars
@@ -74,7 +72,7 @@ Together, they create agents that are **truthful, transparent, and reproducible*
 ---
 
 ## 🚀 Demo Highlights
-**File:** [`clients/integration_test_mcp_json.py`](clients/integration_test_mcp_json.py)  
+**File:** [`clients/integration_test_mcp_json.py`](../../clients/integration_test_mcp_json.py)  
 A **112-line script** that orchestrates three MCP servers and executes grounded reasoning.  
 
 ### Flow
@@ -98,7 +96,6 @@ response = await agent.ainvoke({
 ```bash
 # Setup
 uv venv --python 3.13 && source .venv/bin/activate
-uv pip install -e .
 cp .env.example .env  # Add OPENAI_API_KEY, LANGSMITH_API_KEY
 
 # Run the demo
@@ -106,27 +103,6 @@ python clients/integration_test_mcp_json.py
 ```
 
 🧠 The script auto-spawns all servers and logs a LangSmith trace of the reasoning chain.
-
----
-
-## 🧩 Example Outputs
-
-**Math Example:**
-```
-01. Tool call: add → 42
-02. Tool call: multiply → 126
-✅ Final Answer: (15 + 27) * 3 = 126
-```
-
-**Docs-Grounded Example:**
-```
-✅ Final Answer:
-In LangChain 1.0.2, use:
-from langchain.agents import create_agent
-llm = ChatOpenAI(model="gpt-4o")
-agent = create_agent(llm, tools=tools)
-[Source: https://docs.langchain.com/oss/python/langchain/agents]
-```
 
 ---
 
