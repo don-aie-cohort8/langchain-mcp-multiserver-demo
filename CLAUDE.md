@@ -131,8 +131,7 @@ The system supports multiple transports through a unified interface:
    - LangChain tools → MCP: `to_fastmcp()` from `langchain_mcp_adapters.tools`
    - MCP tools → LangChain: `MultiServerMCPClient.get_tools()` returns `BaseTool` instances
 
-2. **Factory Pattern** - Transport selection via configuration
-   - `sessions.py` provides transport abstraction
+2. **Factory Pattern** - Transport selection via configuration in `MultiServerMCPClient`
 
 3. **Strategy Pattern** - Display modes (full trace, minimal, programmatic)
    - See `clients/display_utils.py`
@@ -146,15 +145,22 @@ The system supports multiple transports through a unified interface:
 │   ├── wrap_langchain_tools_server.py  # LangChain → MCP adapter (port 8001)
 │   └── math_server.py         # Stdio server
 ├── clients/                   # Client implementations and utilities
-│   ├── integration_test.py    # Comprehensive test suite
-│   ├── integration_test_mcp_json.py  # Stdio transport demo
+│   ├── integration_test.py    # Multi-server HTTP integration test
+│   ├── integration_test_mcp_json.py  # **Main demo** - Stdio transport (112 lines)
 │   ├── display_utils.py       # Response formatting utilities
 │   └── langchain_mcp_adapter_client.ipynb  # Interactive examples
 ├── examples/                  # Additional examples
 │   └── servers/streamable-http-stateless/  # Low-level server example
 ├── architecture/              # Generated architecture documentation
 ├── storytelling/              # Story generation templates and outputs
+│   ├── templates/             # Template files for documentation generation
+│   └── output/                # Generated documentation outputs
+├── docs/                      # Additional documentation
+│   ├── LANGGRAPH_MIGRATION_V1.md  # Migration guide from LangGraph to LangChain v1
+│   ├── TRANSPORT_COMPARISON.md    # Comparison of MCP transport protocols
+│   └── integration_test_mcp_json.md  # Detailed output from main demo
 ├── .mcp.json                  # External MCP server configuration
+├── .env.example               # Environment variable template
 ├── pyproject.toml             # Project dependencies
 └── README.md                  # Project documentation
 ```
@@ -248,6 +254,54 @@ if "8" in answer:
     proceed_with_next_step()
 ```
 
+### MCP Server Subprocess Spawning Pattern
+
+The main demo (`clients/integration_test_mcp_json.py`) shows how to spawn MCP servers as subprocesses using hardcoded configuration:
+
+```python
+import os
+from dotenv import load_dotenv
+from langchain_mcp_adapters.client import MultiServerMCPClient
+
+load_dotenv()
+
+def hardcoded_mcp_config():
+    """Hard-coded MCP server definitions for subprocess spawning."""
+    return {
+        "mcp-server-time": {
+            "transport": "stdio",
+            "command": "uvx",
+            "args": ["mcp-server-time", "--local-timezone=America/Los_Angeles"],
+            "env": {},
+        },
+        "sequential-thinking": {
+            "transport": "stdio",
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+            "env": {},
+        },
+        "Context7": {
+            "transport": "stdio",
+            "command": "npx",
+            "args": ["-y", "@upstash/context7-mcp"],
+            "env": {"CALCOM_API_KEY": os.environ.get("CALCOM_API_KEY", "")},
+        },
+    }
+
+async def main():
+    # Client spawns servers as subprocesses automatically
+    client = MultiServerMCPClient(hardcoded_mcp_config())
+    tools = await client.get_tools()
+    agent = create_agent("openai:gpt-4.1", tools)
+    # ... use agent
+```
+
+**Key Points:**
+- `MultiServerMCPClient` auto-spawns stdio servers as subprocesses
+- Environment variables can be passed via `env` dict
+- Mix stdio and HTTP transports in same config
+- See `clients/integration_test_mcp_json.py` for complete example
+
 ## MCP Server Configuration
 
 External MCP servers are configured in `.mcp.json`:
@@ -325,6 +379,10 @@ to create the actual file. Do not just describe what you would write.
 
 - `README.md` - Project overview, quick start, troubleshooting
 - `architecture/README.md` - Comprehensive architecture documentation (generated)
+- `docs/LANGGRAPH_MIGRATION_V1.md` - Migration guide from LangGraph to LangChain v1
+- `docs/TRANSPORT_COMPARISON.md` - Comparison of MCP transport protocols
+- `docs/integration_test_mcp_json.md` - Detailed output from main demo with LangSmith trace
+- `storytelling/` - Templates and generated documentation for presentations
 - This file - Development guidance for Claude Code
 
 ## Technology Stack
@@ -333,10 +391,11 @@ to create the actual file. Do not just describe what you would write.
 |------------|---------|---------|
 | Python | >=3.13 | Primary language |
 | MCP SDK | >=1.6.0 | Model Context Protocol implementation |
-| LangChain | >=0.3.19 | Agent orchestration framework |
+| LangChain | >=1.0.0 | Agent orchestration framework |
 | LangChain MCP Adapters | >=0.1.11 | Bridge between MCP and LangChain |
-| LangGraph | >=0.6.7 | Graph-based agent workflows |
+| LangGraph | >=1.0.0 | Graph-based agent workflows |
 | OpenAI | >=1.72.0 | LLM provider (GPT-4.1) |
+| Claude Agent SDK | >=0.1.4 | Multi-agent orchestration utilities |
 | FastMCP | (via MCP SDK) | High-level server framework |
 | Uvicorn | (transitive) | ASGI server runtime |
 
@@ -347,4 +406,8 @@ to create the actual file. Do not just describe what you would write.
 - **Purpose**: Educational demonstration for AIE Cohort 8
 - **Python Version**: >=3.13
 - **License**: (Same as parent project)
-- exclude information and analysis of files and directories that are included in the .gitignore from the @CLAUDE.md file
+
+## Notes
+
+- `ra_*` directories are excluded from git (see `.gitignore`) and contain the Repository Analyzer Framework
+- Generated architecture documentation in `architecture/` may reference internal implementation details from the `langchain-mcp-adapters` library (e.g., `sessions.py` is part of that library, not this repo)
