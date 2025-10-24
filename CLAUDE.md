@@ -4,480 +4,347 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-Educational repository demonstrating Model Context Protocol (MCP) integration with LangChain and LangGraph. Created for AI Engineering Bootcamp Cohort 8, Session 13.
+This is an **educational demonstration** of integrating multiple Model Context Protocol (MCP) servers with LangChain agents. The project shows how to orchestrate tools and capabilities from heterogeneous services (Python, Node.js, different transports) into a unified agent framework.
 
-**Core Concepts:**
-- Multi-server MCP architecture (connecting to multiple MCP servers simultaneously)
-- Transport types (stdio vs streamable-http)
-- LangChain → MCP tool conversion
-- LangGraph agent orchestration with MCP tools
+**Key Problem Solved**: Traditional AI agent frameworks struggle with integrating tools from diverse sources. This project demonstrates a clean, protocol-based approach where tools can be exposed via MCP servers and consumed uniformly by LangChain agents, regardless of the underlying transport.
 
-## Repository Structure
+## Python Environment
 
-```
-├── servers/                    # MCP server implementations
-│   ├── wrap_langchain_tools_server.py  # LangChain tools → MCP (port 8001)
-│   ├── weather_server.py          # Weather API mock (port 8000)
-│   └── math_server.py             # stdio transport example
-├── clients/                    # Client code and utilities
-│   ├── integration_test.py        # Automated test suite
-│   ├── langchain_mcp_adapter_client.ipynb  # Interactive examples
-│   └── display_utils.py           # Response formatting utilities
-├── docs/
-│   └── TRANSPORT_COMPARISON.md    # stdio vs streamable-http guide
-├── storytelling/               # Documentation generation
-│   ├── templates/                 # Output templates
-│   └── output/                    # Generated docs
-├── .cursor/                    # Cursor AI rules/prompts
-│   ├── rules/                     # Documentation generation rules
-│   └── prompts/                   # Quick-start commands
-├── .mcp.json                   # External MCP server registry
-├── pyproject.toml              # Dependencies (uv format)
-└── README.md                   # Quick start guide
-```
-
-**Key Teaching Files:**
-- `servers/wrap_langchain_tools_server.py` — Demonstrates LangChain → MCP tool conversion
-- `clients/integration_test.py` — Complete working example with all display modes
-- `clients/display_utils.py` — Reusable response formatting (import this in your code)
-- `docs/TRANSPORT_COMPARISON.md` — When to use stdio vs streamable-http
-
-## Environment Setup
+### Setup
 
 ```bash
-# Create and activate virtual environment (Python 3.13)
+# Create virtual environment (Python 3.13)
 uv venv --python 3.13
-source .venv/bin/activate
+source .venv/bin/activate  # Linux/WSL/Mac
 
 # Install dependencies
 uv pip install -e .
 
-# Create .env file with required variables
+# Set up environment variables
 cp .env.example .env
-# Edit .env and add OPENAI_API_KEY
+# Edit .env and add your API keys
 ```
 
-**Required Environment Variables:**
-- `OPENAI_API_KEY` — Required for LLM operations
-- `LANGCHAIN_API_KEY` — Optional, for LangSmith tracing
-- `LANGSMITH_TRACING` — Optional, set to "true" for tracing
+### Environment Variables
+
+Required:
+- `OPENAI_API_KEY` - For LLM reasoning (GPT-4.1)
+
+Optional:
+- `LANGSMITH_API_KEY`, `LANGSMITH_TRACING`, `LANGSMITH_PROJECT` - For LangSmith tracing
+- `CALCOM_API_KEY` - For Context7 calendar integration
 
 ## Common Development Commands
 
-### Starting MCP Servers
-
-**IMPORTANT:** MCP servers must run in separate terminal windows BEFORE starting clients.
+### Running MCP Servers
 
 ```bash
-# Terminal 1 - Weather Server (port 8000)
-source .venv/bin/activate
+# Weather Server (HTTP, port 8000)
 python servers/weather_server.py
 
-# Terminal 2 - LangChain Tools Server (port 8001)
-source .venv/bin/activate
-python servers/wrap_langchain_tools_server.py --port 8001
+# Weather Server (custom port)
+python servers/weather_server.py --port 8080 --host 0.0.0.0
 
-# Custom port/host options
-python servers/wrap_langchain_tools_server.py --port 8002 --host 0.0.0.0
+# LangChain Tools Server (HTTP, port 8001)
+python servers/wrap_langchain_tools_server.py
+
+# LangChain Tools Server (custom port)
+python servers/wrap_langchain_tools_server.py --port 8002
+
+# Math Server (stdio) - run via client integration
+# See clients/integration_test_mcp_json.py
+
+# Example Low-Level Server (HTTP, port 3000)
+cd examples/servers/streamable-http-stateless/
+uv run mcp-simple-streamablehttp-stateless --port 3000
 ```
 
-### Running Client Examples
+### Running Clients
 
 ```bash
-# Integration test suite (requires servers running)
-source .venv/bin/activate
+# Integration Test (requires servers running)
+# Terminal 1: python servers/weather_server.py
+# Terminal 2: python servers/wrap_langchain_tools_server.py
+# Terminal 3:
 python clients/integration_test.py
 
-# Jupyter notebook
-source .venv/bin/activate
+# MCP JSON Test (spawns servers as subprocesses)
+python clients/integration_test_mcp_json.py
+
+# Jupyter Notebook Client
 jupyter notebook clients/langchain_mcp_adapter_client.ipynb
 ```
 
-### Port Management
+### Troubleshooting Servers
 
 ```bash
-# Check if port is in use
-lsof -i :8000
-lsof -i :8001
+# Check if server is running
+curl http://localhost:8000/mcp  # For HTTP servers
+lsof -i :8000  # Check port usage
 
-# Kill process on port
-kill -9 <PID>
+# Kill server on port
+lsof -i :8000 | grep LISTEN | awk '{print $2}' | xargs kill -9
+
+# Test server manually
+python servers/weather_server.py  # Should show "Starting server..."
 ```
 
-## LLM Application Stack Layers
+## Architecture Overview
 
-This repository demonstrates components across multiple LLM application stack layers:
+### Four-Layer Architecture
 
-| **Layer** | **Components in This Project** |
-|-----------|-------------------------------|
-| **Data Pipelines** | N/A (mock data in weather_server.py) |
-| **Embeddings** | N/A (focus is on tool orchestration) |
-| **Vector DB** | N/A (not used in this demo) |
-| **Orchestrator** | LangGraph (create_react_agent), LangChain |
-| **APIs/Tools** | MCP servers (weather, math, langchain_tools), FastMCP |
-| **Caches** | N/A |
-| **Monitoring/Eval** | LangSmith tracing (optional), display_utils.py for response inspection |
-| **Validators** | N/A (could be added to tool inputs/outputs) |
-| **UI/Hosting** | Jupyter notebooks (langchain_mcp_adapter_client.ipynb), Python scripts |
+1. **Client Layer** (Blue)
+   - Integration Test Client (`clients/integration_test.py`)
+   - LangChain Agent (ReAct pattern)
+   - MultiServerMCPClient (manages connections to multiple servers)
+   - Display Utils (`clients/display_utils.py`)
 
-**Key Focus:** This project primarily demonstrates the **Orchestrator** and **APIs/Tools** layers through MCP multi-server integration with LangGraph.
+2. **Custom MCP Server Layer** (Green)
+   - Weather Server (Port 8000) - FastMCP HTTP server
+   - LangChain Tools Server (Port 8001) - Converts LangChain tools to MCP format
+   - Math Server (stdio) - Simple stdio transport
+   - Example Server (Port 3000) - Low-level MCP implementation
 
-## Key Architecture Patterns
+3. **External MCP Services Layer** (Orange)
+   - Time Server (via uvx)
+   - Sequential Thinking (via npx)
+   - Context7 Calendar (via npx)
+   - AI Docs Server (via uvx)
 
-### 0. Critical: Server Lifecycle Management
+4. **External APIs Layer** (Red)
+   - OpenAI API (GPT-4.1)
+   - Cal.com API
+   - llms.txt Documentation sources
 
-**MCP servers MUST run as independent processes.** Do not attempt to start servers programmatically from client code.
+### Transport Protocols
 
-**Server Startup Pattern:**
-```bash
-# Separate terminal for each server
-python servers/weather_server.py          # Port 8000
-python servers/wrap_langchain_tools_server.py  # Port 8001
+The system supports multiple transports through a unified interface:
+
+- **stdio** - Subprocess-based, fastest for local tools
+- **streamable-http** - HTTP POST + Server-Sent Events, best for web services
+- **SSE** - Server-Sent Events only
+- **WebSocket** - Bidirectional streaming (optional)
+
+### Key Design Patterns
+
+1. **Adapter Pattern** - Bidirectional conversion between LangChain and MCP formats
+   - LangChain tools → MCP: `to_fastmcp()` from `langchain_mcp_adapters.tools`
+   - MCP tools → LangChain: `MultiServerMCPClient.get_tools()` returns `BaseTool` instances
+
+2. **Factory Pattern** - Transport selection via configuration
+   - `sessions.py` provides transport abstraction
+
+3. **Strategy Pattern** - Display modes (full trace, minimal, programmatic)
+   - See `clients/display_utils.py`
+
+## Repository Structure
+
+```
+.
+├── servers/                    # MCP server implementations
+│   ├── weather_server.py      # FastMCP HTTP server (port 8000)
+│   ├── wrap_langchain_tools_server.py  # LangChain → MCP adapter (port 8001)
+│   └── math_server.py         # Stdio server
+├── clients/                   # Client implementations and utilities
+│   ├── integration_test.py    # Comprehensive test suite
+│   ├── integration_test_mcp_json.py  # Stdio transport demo
+│   ├── display_utils.py       # Response formatting utilities
+│   └── langchain_mcp_adapter_client.ipynb  # Interactive examples
+├── examples/                  # Additional examples
+│   └── servers/streamable-http-stateless/  # Low-level server example
+├── architecture/              # Generated architecture documentation
+├── storytelling/              # Story generation templates and outputs
+├── .mcp.json                  # External MCP server configuration
+├── pyproject.toml             # Project dependencies
+└── README.md                  # Project documentation
 ```
 
-**Client Connection Pattern:**
+## Key Implementation Patterns
+
+### Creating an MCP Server (FastMCP)
+
 ```python
-# Client connects to running servers via HTTP
-client = MultiServerMCPClient({
-    "server_name": {
-        "url": "http://localhost:8000/mcp",
-        "transport": "streamable_http",
-    }
-})
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("ServerName")
+
+@mcp.tool()
+async def my_tool(param: str) -> str:
+    """Tool description for LLM"""
+    return f"Result: {param}"
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--host", default="127.0.0.1")
+    args = parser.parse_args()
+
+    mcp.run(transport="streamable-http", host=args.host, port=args.port)
 ```
 
-**Why This Matters:**
-- Attempting `mcp.run()` in Jupyter causes `RuntimeError: Already running asyncio`
-- Servers must be independently restartable without affecting clients
-- Multiple clients can connect to the same server instance
-- Port conflicts indicate a server is already running (not necessarily an error)
-
-### 1. MCP Transport Types
-
-**stdio Transport** (`math_server.py`):
-- Client spawns server as subprocess
-- Communication via stdin/stdout pipes
-- Single client connection only
-- Cannot run in Jupyter (asyncio conflict)
-- Good for: CLI tools, single-user applications
-
-**streamable-http Transport** (`weather_server.py`, `wrap_langchain_tools_server.py`):
-- Server runs independently as HTTP service
-- Multiple concurrent client connections
-- Network-accessible
-- Jupyter-compatible
-- Good for: Multi-user services, distributed systems
-
-See [docs/TRANSPORT_COMPARISON.md](docs/TRANSPORT_COMPARISON.md) for detailed comparison.
-
-### 2. Multi-Server Client Pattern
-
-Connect to multiple heterogeneous MCP servers simultaneously:
-
-```python
-from langchain_mcp_adapters.client import MultiServerMCPClient
-
-client = MultiServerMCPClient({
-    "langchain_math": {
-        "url": "http://localhost:8001/mcp",
-        "transport": "streamable_http",
-    },
-    "weather": {
-        "url": "http://localhost:8000/mcp",
-        "transport": "streamable_http",
-    },
-    "math": {  # stdio example
-        "command": "python",
-        "args": ["servers/math_server.py"],
-        "transport": "stdio",
-    }
-})
-
-# Get tools from all servers
-tools = await client.get_tools()
-```
-
-### 3. LangChain → MCP Tool Conversion
-
-Pattern demonstrated in `wrap_langchain_tools_server.py`:
+### Converting LangChain Tools to MCP
 
 ```python
 from langchain_core.tools import tool
 from langchain_mcp_adapters.tools import to_fastmcp
-from mcp.server.fastmcp import FastMCP
 
 @tool
-def my_tool(param: str) -> str:
-    """Tool description"""
-    return result
+def add(a: int, b: int) -> int:
+    """Add two numbers"""
+    return a + b
 
-# Convert to FastMCP format
-fastmcp_tool = to_fastmcp(my_tool)
+# Convert to FastMCP tool
+fastmcp_add = to_fastmcp(add)
 
-# Create and run server
-mcp = FastMCP("Server Name", tools=[fastmcp_tool], host="127.0.0.1", port=8001)
-mcp.run(transport="streamable-http")
+# Use in FastMCP server
+mcp = FastMCP("Math")
+mcp.add_tool(fastmcp_add)
 ```
 
-**When to Create New Servers:**
-- **Create new server:** When you need persistent, reusable tools accessible to multiple clients
-- **Add to existing server:** When extending capabilities of current service domain
-- **Direct LangChain tools:** When tools are client-specific or single-use (no server needed)
-
-**Port Assignment Convention:**
-- `8000` — weather_server.py
-- `8001` — wrap_langchain_tools_server.py
-- `8002+` — Your custom servers
-
-### 4. LangGraph Agent Creation
-
-Pattern for creating ReAct agents with MCP tools:
+### Client Integration Pattern
 
 ```python
-from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_react_agent
+from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain.agents import create_agent
 
-# Get tools from MCP client
+# Configure multiple servers
+client = MultiServerMCPClient({
+    "weather": {
+        "url": "http://localhost:8000/mcp",
+        "transport": "streamable_http"
+    },
+    "math": {
+        "command": "python",
+        "args": ["servers/math_server.py"],
+        "transport": "stdio"
+    }
+})
+
+# Discover tools from all servers
 tools = await client.get_tools()
 
-# Create LLM
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+# Create agent with aggregated tools
+agent = create_agent("openai:gpt-4.1", tools)
 
-# Create agent graph
-agent = create_react_agent(llm, tools)
-
-# Invoke agent
-response = await agent.ainvoke({"messages": "your query here"})
+# Execute query
+response = await agent.ainvoke({"messages": "What's 5 + 3?"})
 ```
 
-**Key Points:**
-- Tools come from `client.get_tools()` (aggregates all connected MCP servers)
-- Agent automatically selects and chains tools based on query
-- Response includes full message trace (human → AI → tool → AI → ...)
-- Use display utilities to format the response
-
-**Note on integration_test.py:**
-The test file contains a placeholder for demonstrating different agent creation patterns. During demos, it switches between `create_agent` (placeholder) and `create_react_agent` (actual LangGraph function). When writing new code, always use `create_react_agent` from `langgraph.prebuilt`.
-
-### 5. Display Utilities (clients/display_utils.py)
-
-Three key functions for formatting agent responses:
+### Display Response Pattern
 
 ```python
-from display_utils import display_agent_response, get_final_answer, print_tools_summary
+from clients.display_utils import display_agent_response, get_final_answer
 
-# Full trace with token usage
+# Development/Debugging: Full trace with token usage
 display_agent_response(response, show_full_trace=True, show_token_usage=True)
 
-# Minimal output (final answer only)
+# Production: Minimal display (final answer only)
 display_agent_response(response, show_full_trace=False)
 
-# Extract answer programmatically
+# Automated Pipelines: Programmatic extraction
 answer = get_final_answer(response)
-
-# Display tool inventory
-tools = await client.get_tools()
-print_tools_summary(tools)
+if "8" in answer:
+    proceed_with_next_step()
 ```
 
-## Import Patterns
+## MCP Server Configuration
 
-```python
-# When in clients/ directory or project root
-from display_utils import display_agent_response, get_final_answer, print_tools_summary
+External MCP servers are configured in `.mcp.json`:
 
-# When display_utils not in path
-import sys
-sys.path.append('clients')
-from display_utils import display_agent_response
-```
+- **mcp-server-time** - Timezone operations (uvx)
+- **sequential-thinking** - Advanced reasoning (npx)
+- **Context7** - Calendar integration with Cal.com (npx)
+- **ai-docs-server** - Documentation fetching (uvx) - MCP Protocol, FastMCP, LangChain, LangGraph, Anthropic
+- **ai-docs-server-full** - Full documentation versions (uvx)
 
-## Common Issues and Solutions
+## Development Best Practices
 
-### RuntimeError: Already running asyncio
-**Cause:** Attempting to run `mcp.run()` inside Jupyter notebook
+### Server Development
 
-**Solution:** MCP servers must run in separate terminal processes. Use client code in notebooks to connect to running servers.
+1. **FastMCP for Simple Tools** - Use decorator-based approach for rapid development
+2. **Low-Level Server for Control** - Use `Server` class for stateless operation or custom middleware
+3. **CLI Arguments** - Accept `--port` and `--host` for flexibility
+4. **Environment Loading** - Use `python-dotenv` to load `.env` files
+5. **Async-First** - All I/O operations should use `async/await`
 
-### Connection closed / Connection refused
-**Cause:** Server not running or incorrect port
+### Client Development
 
-**Solution:**
-1. Verify server is running in separate terminal
-2. Check port numbers: 8000 (weather), 8001 (langchain_tools)
-3. Review server startup logs for errors
-4. Look for the startup message: `Starting LangChain MCP Server on 127.0.0.1:8001`
+1. **Tool Discovery** - Always call `client.get_tools()` to discover available tools
+2. **Session Management** - Use `async with client.session()` for persistent connections
+3. **Error Handling** - Catch `ToolException`, protocol errors, and transport errors
+4. **Display Modes** - Choose appropriate display mode for context (debug, production, automated)
 
-### Import Error: cannot import display_utils
-**Cause:** Running code from wrong directory or package not installed
+### Agent Development
 
-**Solution:**
+1. **Single Responsibility** - Each agent should have one clear purpose
+2. **Explicit Tools** - Only include tools the agent needs
+3. **File Writing Mandate** - Agents MUST use Write tool, not describe output
+4. **Clear Prompts** - Include examples and edge cases in system prompts
+
+## Integration with Cursor Rules
+
+This repository includes Cursor rules in `.cursor/rules/`:
+
+- **mcp-langgraph-context.mdc** - MCP and LangGraph integration patterns
+- **llm-stack-alignment.mdc** - LLM stack component mapping
+- **repo-storytelling-suite.mdc** - Repository storytelling and documentation generation
+
+These rules guide context-aware assistance for MCP server development, LangGraph orchestration, and architecture documentation.
+
+## Troubleshooting
+
+### Port Already in Use
+
 ```bash
-# If in project root, run from clients/ directory
-cd clients
-python integration_test.py
+# Find process using port
+lsof -i :8000
 
-# Or add to sys.path
-import sys
-sys.path.append('clients')
-from display_utils import display_agent_response
-
-# Or install package in editable mode
-uv pip install -e .
-```
-
-### Address Already in Use (Port Conflict)
-**Cause:** Server already running on that port (may be from previous session)
-
-**Solution:**
-```bash
-# Check what's using the port
-lsof -i :8001
-
-# Kill the existing process
+# Kill process
 kill -9 <PID>
 
-# Or use a different port
-python servers/wrap_langchain_tools_server.py --port 8002
+# Or use different port
+python servers/weather_server.py --port 8080
 ```
 
-### OPENAI_API_KEY not found
-**Cause:** Environment variable not set or .env file missing
+### Connection Closed Error
 
-**Solution:**
-```bash
-# Create .env file
-cp .env.example .env
+- Ensure server is running before starting client
+- Check port number matches between server and client
+- Verify server started successfully (no errors in terminal)
 
-# Edit .env and add your key
-echo "OPENAI_API_KEY=sk-..." >> .env
+### Agent Not Writing Files
 
-# Or export directly
-export OPENAI_API_KEY=sk-...
+Ensure agent prompt includes:
+```
+IMPORTANT: When asked to write to a file, ALWAYS use the Write tool
+to create the actual file. Do not just describe what you would write.
 ```
 
-## Testing Patterns
+## Documentation Structure
 
-The [clients/integration_test.py](clients/integration_test.py) demonstrates:
-1. Multi-step reasoning (agent chaining tool calls)
-2. Cross-server invocation (tools from different MCP servers)
-3. Display mode variations (verbose, minimal, programmatic)
-4. Programmatic answer extraction (integration into larger applications)
+- `README.md` - Project overview, quick start, troubleshooting
+- `architecture/README.md` - Comprehensive architecture documentation (generated)
+- This file - Development guidance for Claude Code
 
-Each test case includes detailed docstrings explaining expected behavior and educational value.
+## Technology Stack
 
-## MCP Server Registry (.mcp.json)
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Python | >=3.13 | Primary language |
+| MCP SDK | >=1.6.0 | Model Context Protocol implementation |
+| LangChain | >=0.3.19 | Agent orchestration framework |
+| LangChain MCP Adapters | >=0.1.11 | Bridge between MCP and LangChain |
+| LangGraph | >=0.6.7 | Graph-based agent workflows |
+| OpenAI | >=1.72.0 | LLM provider (GPT-4.1) |
+| FastMCP | (via MCP SDK) | High-level server framework |
+| Uvicorn | (transitive) | ASGI server runtime |
 
-Configures MCP servers for external MCP clients (e.g., Claude Desktop):
-- `mcp-server-time` — Time utilities
-- `sequential-thinking` — Chain-of-thought reasoning
-- `Context7` — Documentation lookup
-- `ai-docs-server` — Curated docs (LangChain, LangGraph, MCP, Anthropic)
-- `ai-docs-server-full` — Full documentation mirrors
+## Project Metadata
 
-## Key Dependencies
-
-- `langchain==0.3.19` — Core LangChain framework
-- `langchain-mcp-adapters>=0.1.11` — MCP integration
-- `langchain-openai==0.3.7` — OpenAI model support
-- `langgraph==0.6.7` — Agent orchestration
-- `mcp[cli]>=1.6.0` — Model Context Protocol implementation
-- `python-dotenv>=1.1.0` — Environment variable management
-
-All dependencies managed via `uv` package manager (Python 3.13 required).
-
-## Documentation Generation Philosophy
-
-This repository follows a **"Build • Ship • Share"** documentation workflow using the Repository Storytelling Suite.
-
-**Write Permissions:**
-- ✅ Documentation files: `README.md`, `PROJECT_CONTEXT.md`, `ARCHITECTURE_OVERVIEW.md`, `SLIDES.md`, `VIDEO_SCRIPT.md`, `LINKEDIN_POST.md`, `LEARNING_REFLECTION.md`
-- ✅ Directories: `docs/`, `storytelling/` (output and templates)
-- ❌ Code changes require explicit user approval
-
-**Documentation Workflow:**
-
-The Storytelling Suite generates seven interconnected artifacts:
-1. **Project Context** → Foundation (WHY/WHAT)
-2. **Repo Overview** → Newcomer onboarding
-3. **Architecture Summary** → HOW it works (with LLM stack mapping + MCP/LangGraph diagrams)
-4. **Slides** → 5-minute presentation
-5. **Video Script** → Narration with screen cues
-6. **LinkedIn Post** → Social sharing
-7. **Learning Reflection** → Meta-learning and next sprint planning
-
-Each rule handles errors gracefully (missing templates, incomplete context) and maintains continuity across artifacts.
-
-See **Cursor Integration** section below for detailed trigger commands.
-
-## Development Workflow
-
-### Standard Workflow
-
-1. **Activate environment:** `source .venv/bin/activate`
-2. **Start MCP servers** (in separate terminals):
-   ```bash
-   # Terminal 1
-   python servers/weather_server.py
-
-   # Terminal 2
-   python servers/wrap_langchain_tools_server.py --port 8001
-   ```
-3. **Run client code:**
-   - Interactive: `jupyter notebook clients/langchain_mcp_adapter_client.ipynb`
-   - Testing: `python clients/integration_test.py`
-4. **Verify output:** Use display utilities for formatted traces
-
-### Cursor Integration
-
-The `.cursor/` and `storytelling/` directories provide automated documentation generation using a **Repository Storytelling Suite**.
-
-**Cursor Rules** (`.cursor/rules/`):
-
-1. **repo-storytelling-suite.mdc** — Template-aware documentation generation workflow
-   - Natural language triggers (no file paths needed)
-   - Dependency-based rule chaining
-   - Automatic output directory creation (`storytelling/output/`)
-   - Error handling with graceful degradation
-
-2. **llm-stack-alignment.mdc** — LLM application stack mapping
-   - Maps components to layers: Data Pipelines, Embeddings, Vector DB, Orchestrator, APIs/Tools, Caches, Monitoring/Eval, Validators, UI/Hosting
-   - Generates stack alignment tables in ARCHITECTURE_OVERVIEW.md
-   - Validates component categorization
-
-3. **mcp-langgraph-context.mdc** — MCP and LangGraph pattern extraction
-   - Analyzes graph nodes, state definitions, and tool bindings
-   - Generates Mermaid diagrams (flowchart and state)
-   - Documents MCP server inventory and tool mappings
-   - Extracts integration patterns and error handling strategies
-
-**Storytelling Suite Triggers** (use in Cursor chat):
-
-Execute in sequence for complete documentation:
-1. **"Generate project context doc"** → `PROJECT_CONTEXT.md`
-2. **"Generate repo overview"** → `REPO_OVERVIEW.md` (complements root README)
-3. **"Generate architecture summary"** → `ARCHITECTURE_OVERVIEW.md` (includes stack mapping + MCP/LangGraph diagrams)
-4. **"Generate presentation slides"** → `SLIDES.md` (7-9 slides, <5 min presentation)
-5. **"Generate video script"** → `VIDEO_SCRIPT.md` (650-800 words, includes [SCREEN]/[DEMO] cues)
-6. **"Generate LinkedIn post"** → `LINKEDIN_POST.md` (conversational, invites discussion)
-7. **"Generate learning reflection"** → `LEARNING_REFLECTION.md` (meta-learning, next sprint TODOs)
-
-**Tone:** Coaching, peer-friendly; favors concise bullets (~5-8 words) and short paragraphs.
-
-All outputs automatically saved to `storytelling/output/`
-
-**Templates** (`storytelling/templates/`):
-Templates provide structure when available; if missing, rules use built-in outlines:
-- `REPO_OVERVIEW_TEMPLATE.md`
-- `ARCHITECTURE_OVERVIEW_TEMPLATE.md`
-- `PROJECT_CONTEXT_TEMPLATE.md`
-- `SLIDES_TEMPLATE.md`
-- `VIDEO_SCRIPT_TEMPLATE.md`
-- `LINKEDIN_POST_TEMPLATE.md`
-- `LEARNING_REFLECTION_TEMPLATE.md`
-
-**Key Features:**
-- Dependency-aware: Rules execute in order, reusing earlier outputs
-- Error resilient: Missing templates/outputs trigger graceful fallbacks
-- Context-rich: Reads notebooks (.ipynb), scripts, configs, images for comprehensive docs
-- Continuity: Maintains consistent phrasing across artifacts
+- **Project Name**: langchain-mcp-multiserver-demo
+- **Version**: 0.1.0
+- **Purpose**: Educational demonstration for AIE Cohort 8
+- **Python Version**: >=3.13
+- **License**: (Same as parent project)
+- exclude information and analysis of files and directories that are included in the .gitignore from the @CLAUDE.md file

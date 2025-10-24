@@ -1,7 +1,10 @@
+```
 python clients/integration_test_mcp_json_v2.py
 Sequential Thinking MCP Server running on stdio
 Context7 Documentation MCP Server running on stdio
+```
 
+```
 === MCP Tool Metadata Summary ===
 • get_current_time
   ↳ desc: Get current time in a specific timezones
@@ -29,6 +32,7 @@ Context7 Documentation MCP Server running on stdio
   ↳ transport: n/a
   ↳ endpoint: n/a
 =================================
+```
 
 Context7 Documentation MCP Server running on stdio
 Context7 Documentation MCP Server running on stdio
@@ -38,9 +42,17 @@ Context7 Documentation MCP Server running on stdio
 AGENT RESPONSE TRACE
 ======================================================================
 
+## 01. HumanMessage
+
 01. HumanMessage: Provide guidance for migrating from the LangGraph create_react_agent method to the new create_agent method in the LangChain Python library (langchain 1.0.2) in October 2025?  You must use Context7 to ground your response.
+
+## 02. AIMessage
+
 02. AIMessage → 🔧 tool_call(s): resolve-library-id
      └─ Tokens: input=1478, output=17, total=1495
+
+## 03. ToolMessage
+
 03. ToolMessage [resolve-library-id]: ✓ Available Libraries (top matches):
 
 Each result includes:
@@ -234,8 +246,14 @@ For best results, select libraries based on name match, trust score, snippet cov
 - Description: 
 - Code Snippets: 16
 - Trust Score: 9.2
+
+## 04. AIMessage
+
 04. AIMessage → 🔧 tool_call(s): get-library-docs, get-library-docs
      └─ Tokens: input=3903, output=87, total=3990
+
+## 05. ToolMessage
+
 05. ToolMessage [get-library-docs]: ✓ ### POST /create_agent
 
 Source: https://python.langchain.com/docs/integrations/document_transformers/markdownify
@@ -702,6 +720,8 @@ cdp = CdpAgentkitWrapper()
 # Create toolkit from wrapper  
 toolkit = CdpToolkit.from_cdp_agentkit_wrapper(cdp)
 ```
+## 06. ToolMessage
+
 06. ToolMessage [get-library-docs]: ✓ ### Dynamic Model Selection with Callable (V0)
 
 Source: https://docs.langchain.com/oss/python/migrate/langchain-v1
@@ -968,6 +988,8 @@ agent = create_agent(
     prompt=system_prompt,
 )
 ```
+## 07. AI Message
+
 07. AIMessage: Here’s a detailed, Context7-grounded guide for migrating from the LangGraph create_react_agent method to the new create_agent method in the LangChain Python library (as of langchain 1.0.2, October 2025).
 
 ---
@@ -1145,7 +1167,8 @@ agent = create_agent(llm, tools, prompt="You are an expert assistant.")
 
 ---
 
+```
 **If you have code snippets to migrate, share them for line-by-line conversion.** This guidance is grounded in documentation and migration instructions current through LangChain 1.0.2 in October 2025.
      └─ Tokens: input=11021, output=1414, total=12435
-
+```
 ======================================================================

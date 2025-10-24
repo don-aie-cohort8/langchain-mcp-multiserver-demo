@@ -147,6 +147,19 @@ wheels = [
 ]
 
 [[package]]
+name = "claude-agent-sdk"
+version = "0.1.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "mcp" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/86/44/f470573bb13fc944955f73745cf96d4205c7e00571b0e4c6c66fb1c6c4ea/claude_agent_sdk-0.1.4.tar.gz", hash = "sha256:06472b1a30b5b7c189edd0b7456a6be72d21baa457977d10a4ef257f484c79b2", size = 48046, upload-time = "2025-10-15T21:35:06.28Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/3e/622ee6d7b9932a73a348381718bd3b8e8bdac457293538f4862ba1011223/claude_agent_sdk-0.1.4-py3-none-any.whl", hash = "sha256:4d81ec68dc357b995bfd9c8b904314a8b65fa1de2ef1740eac5e76314310d3f0", size = 35429, upload-time = "2025-10-15T21:35:04.915Z" },
+]
+
+[[package]]
 name = "click"
 version = "8.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -523,6 +536,7 @@ name = "langchain-mcp-multiserver-demo"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "claude-agent-sdk" },
     { name = "ipykernel" },
     { name = "langchain" },
     { name = "langchain-mcp-adapters" },
@@ -537,11 +551,12 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "claude-agent-sdk", specifier = ">=0.1.4" },
     { name = "ipykernel", specifier = ">=7.0.1" },
-    { name = "langchain", specifier = ">=0.3.19" },
+    { name = "langchain", specifier = ">=1.0.0" },
     { name = "langchain-mcp-adapters", specifier = ">=0.1.11" },
-    { name = "langchain-openai", specifier = ">=0.3.7" },
-    { name = "langgraph", specifier = ">=0.6.7" },
+    { name = "langchain-openai", specifier = ">=1.0.0" },
+    { name = "langgraph", specifier = ">=1.0.0" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.6.0" },
     { name = "numpy", specifier = ">=2.2.4" },
     { name = "openai", specifier = ">=1.72.0" },
