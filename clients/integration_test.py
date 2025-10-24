@@ -25,7 +25,7 @@ WHAT THIS TESTS:
 
 COMPARISON TO NOTEBOOK:
 =======================
-While client.ipynb provides an interactive learning environment, this script:
+While langchain_mcp_adapter_client.ipynb provides an interactive learning environment, this script:
 - Runs end-to-end without user interaction (suitable for CI/CD)
 - Tests all display_utils features systematically
 - Serves as reference starting point for production applications
@@ -34,7 +34,7 @@ While client.ipynb provides an interactive learning environment, this script:
 PREREQUISITES:
 ==============
 1. Start the langchain_tools_server in a separate terminal:
-   python servers/langchain_tools_server.py --port 8001
+   python servers/wrap_langchain_tools_server.py --port 8001
 
 2. Start the weather server in another terminal:
    python servers/weather_server.py
@@ -54,7 +54,9 @@ python clients/integration_test.py
 import asyncio
 from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langgraph.prebuilt import create_react_agent
+# from langgraph.prebuilt import create_react_agent
+# will switch during demo to:
+from langchain.agents import create_agent
 from display_utils import display_agent_response, get_final_answer, print_tools_summary
 
 # Load environment variables from .env file (OPENAI_API_KEY, etc.)
@@ -106,7 +108,9 @@ async def main():
 
     # Create agent with the tools
     # TESTS: LangGraph ReAct agent initialization with MCP tools
-    agent = create_react_agent("openai:gpt-4.1", tools)
+    # agent = create_react_agent("openai:gpt-4.1", tools)
+    # will switch during demo to:
+    agent = create_agent("openai:gpt-4.1", tools)
 
     # =========================================================================
     # TEST CASE 1: Multi-Step Reasoning with Full Trace Display
@@ -130,10 +134,12 @@ async def main():
     - Confirms tool invocation order and state propagation
     """
     print("\n" + "=" * 70)
-    print("EXAMPLE 1: Multi-Step Reasoning with Full Trace")
+    print("TEST CASE 1: Multi-Step Reasoning with Full Trace Display")
     print("=" * 70 + "\n")
 
     math_response = await agent.ainvoke({"messages": "what is (15 + 27) * 3?"})
+    
+    print("Full trace with token usage:")
     display_agent_response(math_response, show_full_trace=True, show_token_usage=True)
 
     # =========================================================================
@@ -158,11 +164,18 @@ async def main():
     - Tests agent's tool selection capability
     """
     print("\n" + "=" * 70)
-    print("EXAMPLE 2: Cross-Server Tool Invocation (Minimal Display)")
+    print("TEST CASE 2: Cross-Server Tool Invocation with Minimal Display")
     print("=" * 70 + "\n")
 
     weather_response = await agent.ainvoke({"messages": "what is the weather in NYC?"})
+
+    # show minimal display
+    print("Cross-Server Tool Invocation with Minimal Display:")
     display_agent_response(weather_response, show_full_trace=False)
+
+    # show full trace with token usage
+    print("Full trace with token usage:")
+    display_agent_response(weather_response, show_full_trace=True, show_token_usage=True)
 
     # =========================================================================
     # TEST CASE 3: Programmatic Answer Extraction
@@ -186,15 +199,22 @@ async def main():
     - Tests utility function separate from display formatting
     """
     print("\n" + "=" * 70)
-    print("EXAMPLE 3: Programmatic Answer Extraction")
+    print("TEST CASE 3: Programmatic Answer Extraction")
     print("=" * 70 + "\n")
 
     response = await agent.ainvoke({"messages": "multiply 7 and 9"})
 
+    # show final answer (programmatic answer extraction)
+    print("Programmatic Answer Extraction:")
     answer = get_final_answer(response)
     print(f"Extracted answer: {answer}")
     print(f"Type: {type(answer)}")
     print(f"Can be used in code: {'63' in str(answer)}")
+
+
+    # show full trace with token usage
+    print("Full trace with token usage:")
+    display_agent_response(response, show_full_trace=True, show_token_usage=True)
 
     # =========================================================================
     # TEST CASE 4: Complex Multi-Step Sequential Reasoning
@@ -219,14 +239,22 @@ async def main():
     - Real-world use case: following procedural instructions
     """
     print("\n" + "=" * 70)
-    print("EXAMPLE 4: Complex Sequential Reasoning")
+    print("TEST CASE 4: Complex Multi-Step Sequential Reasoning")
     print("=" * 70 + "\n")
 
     complex_response = await agent.ainvoke(
         {"messages": "First add 100 and 50, then multiply the result by 2"}
     )
+
+    # show trace with defaults
+    print("Complex Multi-Step Sequential Reasoning (with default display parameters):")
     display_agent_response(complex_response)
 
+    # show full trace with token usage
+    print("Full trace with token usage:")
+    display_agent_response(complex_response, show_full_trace=True, show_token_usage=True)
+
+    # script completion
     print("\n" + "=" * 70)
     print("ALL INTEGRATION TESTS COMPLETE")
     print("=" * 70)

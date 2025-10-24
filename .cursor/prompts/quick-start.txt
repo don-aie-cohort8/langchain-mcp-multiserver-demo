@@ -1,0 +1,15 @@
+Run the Storytelling Suite in Cursor.
+
+Suggested sequence:
+1) Generate project context doc
+2) Generate repo overview
+3) Generate architecture summary
+4) Generate presentation slides
+5) Generate video script
+6) Generate LinkedIn post
+7) Generate learning reflection
+
+Tone: coaching, peer-friendly. Target video <5 minutes.
+All outputs are automatically written to the `storytelling/output` folder.
+
+Note: The suite reads context from notebooks, data files, scripts, and configs to provide richer documentation.

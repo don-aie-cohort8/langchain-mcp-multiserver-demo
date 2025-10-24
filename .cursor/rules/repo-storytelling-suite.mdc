@@ -1,0 +1,164 @@
+---
+suite: "Repository Storytelling & Reflection Suite"
+description: "Template-aware rule suite for automated storytelling and reflection docs"
+alwaysApply: true
+globs:
+  - "**/*.md"
+  - "**/*.py"
+  - "**/*.ipynb"
+  - "**/*.json"
+  - "**/*.yaml"
+  - "**/*.yml"
+  - "**/*.csv"
+  - "**/*.txt"
+  - "**/*.sh"
+  - "**/*.png"
+  - "**/*.jpg"
+  - "**/*.svg"
+  - "**/*.gif"
+  - "**/*.drawio"
+  - "**/*.mermaid"
+  - "**/*.html"
+  - "**/*.pdf"
+
+output_root: storytelling/output/
+templates_root: storytelling/templates/
+auto_create_dirs: true
+
+# Note: glob patterns determine READ context, not WRITE scope.
+# Generation is limited to storytelling/output/.
+
+global_instructions: |
+  Always use a friendly, coaching tone.
+  Maintain continuity across generated artifacts; reuse phrasing where helpful.
+  Use TODO: for missing info rather than skipping sections.
+  When reading .ipynb, prefer markdown cells for narrative/context.
+  Prefer concise bullets (~5–8 words) and short paragraphs.
+
+# Conventions:
+# - Outputs -> <output_root>/<FILENAME>.md
+# - Templates -> <templates_root>/<TEMPLATE>.md
+# - Natural triggers only; no file paths in chat.
+---
+# Repository Storytelling & Reflection Suite (Natural Triggers, Template-Aware)
+
+rules:
+
+  - name: "Repository Context Capture"
+    trigger: "Generate project context doc"
+    instructions: |
+      GOAL: Capture the WHY/WHAT of the project concisely for future readers.
+      TEMPLATE (if exists): <templates_root>/PROJECT_CONTEXT_TEMPLATE.md
+      OUTPUT: <output_root>/PROJECT_CONTEXT.md
+
+      Steps:
+      1) Scan repo to identify: problem, audience, goals/outcomes, stack, patterns,
+         key artifacts, milestones, gaps.
+      2) If template exists, fill placeholders; otherwise compose sections per the template's headings.
+      3) Keep it friendly, succinct, and factual; use TODOs where unknown.
+
+      ERROR_HANDLING:
+      - If template missing, use rule instructions as outline
+      - If output directory missing, create it automatically
+      - Always produce a complete document, even with gaps
+
+  - name: "README Generator"
+    trigger: "Generate repo overview"
+    depends_on: ["Repository Context Capture"]
+    instructions: |
+      GOAL: A newcomer-focused landing doc (friendly mentor tone).
+      TEMPLATE: <templates_root>/REPO_OVERVIEW_TEMPLATE.md
+      OUTPUT: <output_root>/REPO_OVERVIEW.md
+
+      Include: Overview, Architecture (diagram or pseudo-diagram), Stack Choices (and why),
+      Key Features, Quick Start (runnable commands), Learning Outcomes, Roadmap.
+      Pull facts from PROJECT_CONTEXT; keep steps accurate and minimal.
+      Ensure this complements the repo root README (do not overwrite root README).
+
+      ERROR_HANDLING:
+      - If template missing, create standard overview structure
+      - If PROJECT_CONTEXT not available, scan repo directly
+      - Always include installation and setup instructions
+
+  - name: "Architecture Deep Dive"
+    trigger: "Generate architecture summary"
+    depends_on: ["Repository Context Capture"]
+    instructions: |
+      GOAL: Explain HOW it works (minimal prose; favor tables/diagrams).
+      TEMPLATE: <templates_root>/ARCHITECTURE_OVERVIEW_TEMPLATE.md
+      OUTPUT: <output_root>/ARCHITECTURE_OVERVIEW.md
+
+      Include: components & roles; data & control flow; integration patterns (LangGraph, MCP);
+      observability/eval; config/secrets; deployment options;
+      decisions/trade-offs; risks & future work; migration/version context if relevant.
+
+      ERROR_HANDLING:
+      - If template missing, create standard architecture doc structure
+      - Always include at least basic system overview
+
+  - name: "Slide Deck"
+    trigger: "Generate presentation slides"
+    depends_on: ["README Generator", "Architecture Deep Dive"]
+    instructions: |
+      GOAL: 7–9 concise slides for a 5-min walkthrough.
+      TEMPLATE: <templates_root>/SLIDES_TEMPLATE.md
+      OUTPUT: <output_root>/SLIDES.md
+
+      Slides: 1) Title/Hook, 2) Problem/Audience, 3) Solution Architecture, 4) Demo Highlights,
+      5) Results/Learnings, 6) Guardrails & Risk, 7) What's Next, 8) Links/Thanks.
+      Use visual cues like '🎯 Goal:' and '🧠 Takeaway:' to focus each slide.
+      Bullets ~5–8 words; each slide = goal → evidence → takeaway.
+
+      ERROR_HANDLING:
+      - If template missing, create standard slide structure
+      - If dependencies missing, focus on available content
+      - Always include at least title, problem, solution, next steps
+
+  - name: "Video Script Generator"
+    trigger: "Generate video script"
+    depends_on: ["Slide Deck"]
+    instructions: |
+      GOAL: <5 minutes (~650–800 words), coach/friend tone.
+      TEMPLATE: <templates_root>/VIDEO_SCRIPT_TEMPLATE.md
+      OUTPUT: <output_root>/VIDEO_SCRIPT.md
+
+      For each slide: ~30–40s narration. Use [SCREEN], [DEMO], [CUT] cues.
+      Include curricular continuity if applicable (e.g., 'builds on our LangGraph module').
+      End with an authentic reflection + CTA to share/ask questions.
+
+      ERROR_HANDLING:
+      - If template missing, create standard script structure
+      - If slides not available, focus on project narrative
+      - Always include opening hook and closing CTA
+
+  - name: "LinkedIn Post Generator"
+    trigger: "Generate LinkedIn post"
+    depends_on: ["Video Script Generator"]
+    instructions: |
+      GOAL: Conversational post that invites discussion (no brag).
+      TEMPLATE: <templates_root>/LINKEDIN_POST_TEMPLATE.md
+      OUTPUT: <output_root>/LINKEDIN_POST.md
+
+      Structure: Hook (relatable question or vivid pain) → 2–3 takeaways → Reflection → Invite discussion → Link.
+      Keep to ~5 short paragraphs with line breaks for scannability.
+
+      ERROR_HANDLING:
+      - If template missing, create standard LinkedIn post structure
+      - If video script not available, focus on project insights
+      - Always include hook and invitation for engagement
+
+  - name: "Reflection Summary"
+    trigger: "Generate learning reflection"
+    depends_on: ["LinkedIn Post Generator"]
+    instructions: |
+      GOAL: Capture meta-learning to reinforce Build • Ship • Share.
+      TEMPLATE: <templates_root>/LEARNING_REFLECTION_TEMPLATE.md
+      OUTPUT: <output_root>/LEARNING_REFLECTION.md
+
+      Include: skills demonstrated; human/AI collaboration lessons; guardrails that mattered;
+      eval & observability notes; migration/version patterns; next sprint (owner → task → DoD).
+
+      ERROR_HANDLING:
+      - If template missing, create standard reflection structure
+      - If previous outputs not available, focus on project experience
+      - Always include at least skills learned and next steps

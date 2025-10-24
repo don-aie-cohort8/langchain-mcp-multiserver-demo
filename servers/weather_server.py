@@ -24,7 +24,6 @@ from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("Weather")
 
-
 @mcp.tool()
 async def get_weather(location: str) -> str:
     """Get weather for location.
@@ -37,25 +36,25 @@ async def get_weather(location: str) -> str:
     """
     return f"It's always sunny in {location}"
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Weather MCP Server")
     parser.add_argument(
         "--port",
         type=int,
         default=8000,
-        help="Port to run the server on (default: 8000)",
+        help="Port to run server on (default: 8000)"
     )
     parser.add_argument(
         "--host",
         type=str,
         default="127.0.0.1",
-        help="Host to bind the server to (default: 127.0.0.1)",
+        help="Host to bind to (default: 127.0.0.1 for local access only, use 0.0.0.0 for network access)"
     )
     args = parser.parse_args()
 
-    print(f"Starting Weather MCP Server on {args.host}:{args.port}")
-    print("Available tools: get_weather")
-    print(f"MCP endpoint: http://{args.host}:{args.port}/mcp")
+    # ✅ set host/port on the instance
+    mcp.host = args.host
+    mcp.port = args.port
 
-    mcp.run(transport="streamable-http", host=args.host, port=args.port)
+    print(f"Starting Weather MCP Server on http://{args.host}:{args.port}/mcp")
+    mcp.run(transport="streamable-http")

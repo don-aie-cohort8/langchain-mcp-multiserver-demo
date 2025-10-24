@@ -1,0 +1,119 @@
+---
+description: "Provides context-aware assistance for MCP (Model Context Protocol) and LangGraph integration patterns"
+globs:
+  - "**/*.py"
+  - "**/*.md"
+  - "**/*.yaml"
+  - "**/*.yml"
+  - "**/*.json"
+  - "**/mcp_*.py"
+  - "**/langgraph_*.py"
+  - "**/storytelling/**/*.md"
+alwaysApply: false
+version: "1.2.0"
+output_root: storytelling/output/
+templates_root: storytelling/templates/
+---
+
+# MCP + LangGraph Context (v1.2)
+
+## Purpose
+This rule provides intelligent assistance for projects using Model Context Protocol (MCP) servers with LangGraph orchestration, ensuring proper integration patterns and documentation.
+
+## Key Concepts
+- **MCP Servers**: External tools and services accessible via Model Context Protocol
+- **LangGraph**: State-based workflow orchestration for LLM applications
+- **Graph Nodes**: Individual processing units in the workflow
+- **State Management**: Shared data structure across graph execution
+- **Tool Bindings**: Connections between graph nodes and MCP tools
+
+## Rules
+
+- name: "LangGraph Extractor"
+  trigger: "Extract graphs"
+  instructions: |
+    GOAL: Analyze and visualize LangGraph workflows with clear documentation.
+    
+    When working with LangGraph:
+    1) Locate graph builders, state definitions, and tool nodes
+    2) Identify node types: conditional, tool-calling, human-in-the-loop
+    3) Map state fields and their reducers
+    4) Create Mermaid diagrams showing:
+       - Flowchart: Node connections and routing logic
+       - State diagram: State transitions and data flow
+    5) Document human-in-the-loop points and decision nodes
+    
+    ERROR_HANDLING:
+    - If graph structure is unclear, mark with TODO: for clarification
+    - Always include at least basic node-to-node flow
+    - Create placeholder diagrams if complete structure unavailable
+
+- name: "MCP Inventory"
+  trigger: "List MCP servers/tools"
+  instructions: |
+    GOAL: Create comprehensive inventory of MCP servers and their integration patterns.
+    
+    MCP Analysis:
+    1) Enumerate all MCP servers and their tools
+    2) Document authentication and environment requirements
+    3) Map tools to specific graph nodes and usage examples
+    4) Identify tool capabilities and limitations
+    5) Document error handling and fallback strategies
+    
+    ERROR_HANDLING:
+    - If MCP server details are missing, mark with TODO: for investigation
+    - Always include at least basic server-to-tool mapping
+    - Flag any authentication or configuration requirements
+
+- name: "Integration Patterns"
+  trigger: "Document MCP-LangGraph patterns"
+  instructions: |
+    GOAL: Identify and document common integration patterns between MCP and LangGraph.
+    
+    Pattern Analysis:
+    1) Tool-calling patterns in graph nodes
+    2) State management for MCP tool results
+    3) Error handling and retry logic
+    4) Authentication flow management
+    5) Performance optimization strategies
+    
+    ERROR_HANDLING:
+    - If patterns are unclear, provide template patterns
+    - Always include at least basic integration examples
+    - Suggest improvements for better reliability
+
+- name: "MCP-LangGraph Integration with Storytelling"
+  trigger: "Generate architecture summary"
+  depends_on: ["Repository Context Capture"]
+  instructions: |
+    GOAL: Integrate MCP and LangGraph analysis with architecture documentation.
+    
+    When generating architecture summaries:
+    1) Include MCP server inventory and tool mappings in ARCHITECTURE_OVERVIEW.md
+    2) Document LangGraph workflow diagrams and state management
+    3) Cross-reference MCP tools with graph nodes and usage patterns
+    4) Include integration patterns and error handling strategies
+    5) Ensure consistency with project context and stack alignment
+    
+    ERROR_HANDLING:
+    - If MCP/LangGraph details are missing, mark with TODO: for investigation
+    - Always include at least basic workflow documentation
+    - Ensure diagrams are properly formatted for architecture docs
+
+- name: "MCP-LangGraph Demo Integration"
+  trigger: "Generate presentation slides"
+  depends_on: ["MCP-LangGraph Integration with Storytelling"]
+  instructions: |
+    GOAL: Include MCP and LangGraph insights in presentation materials.
+    
+    When generating slides and demos:
+    1) Highlight key MCP server capabilities and tool integrations
+    2) Show LangGraph workflow visualization in demo sections
+    3) Include error handling and fallback strategies in guardrails section
+    4) Demonstrate human-in-the-loop patterns where applicable
+    5) Show performance and reliability considerations
+    
+    ERROR_HANDLING:
+    - If demo content is unclear, focus on architectural patterns
+    - Always include at least basic MCP/LangGraph workflow explanation
+    - Ensure technical accuracy in presentation materials
