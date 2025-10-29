@@ -10,6 +10,8 @@ This is an **educational demonstration** of integrating multiple Model Context P
 
 **Quick Entry Point**: Run `python clients/integration_test_mcp_json.py` (112 lines) to see the complete demo with Context7 documentation grounding. See [LangSmith trace](https://smith.langchain.com/public/be69829b-ae12-4d0d-a735-ce53853d1b45/r).
 
+**Educational Materials**: The `examples/` directory contains side-by-side implementations showing how Pydantic models and business logic transfer across FastAPI, FastMCP, PydanticAI, and FastA2A. See [examples/README.md](examples/README.md) for the learning path.
+
 ## Python Environment
 
 ### Setup
@@ -151,16 +153,29 @@ The system supports multiple transports through a unified interface:
 │   ├── integration_test_mcp_json.py  # **Main demo** - Stdio transport (112 lines)
 │   ├── display_utils.py       # Response formatting utilities
 │   └── langchain_mcp_adapter_client.ipynb  # Interactive examples
-├── examples/                  # Additional examples
-│   └── servers/streamable-http-stateless/  # Low-level server example
+├── examples/                  # **Educational examples** - FastAPI/FastMCP/PydanticAI/FastA2A
+│   ├── common/                # Shared Pydantic models (100% reusable)
+│   │   ├── __init__.py
+│   │   └── models.py          # WeatherQuery, WeatherResponse, etc.
+│   ├── weather_service/       # Same service, 4 implementations
+│   │   ├── README.md          # Side-by-side comparison
+│   │   ├── fastapi_impl.py    # FastAPI baseline (port 8000)
+│   │   ├── fastmcp_impl.py    # FastMCP server (port 8100)
+│   │   ├── pydanticai_impl.py # PydanticAI agent (interactive)
+│   │   └── fasta2a_impl.py    # FastA2A stateful agent (port 8300)
+│   ├── servers/streamable-http-stateless/  # Low-level server example
+│   └── README.md              # Educational overview and learning path
 ├── architecture/              # Generated architecture documentation
 ├── storytelling/              # Story generation templates and outputs
 │   ├── templates/             # Template files for documentation generation
 │   └── output/                # Generated documentation outputs
 ├── docs/                      # Additional documentation
-│   ├── LANGGRAPH_MIGRATION_V1.md  # Migration guide from LangGraph to LangChain v1
-│   ├── TRANSPORT_COMPARISON.md    # Comparison of MCP transport protocols
-│   └── integration_test_mcp_json.md  # Detailed output from main demo
+│   ├── FASTMCP_PYDANTICAI_COMPARISON.md  # Comprehensive comparison
+│   ├── MCP_VS_A2A_DECISION_GUIDE.md      # When to use which
+│   ├── PYDANTIC_MODEL_REUSE_PATTERNS.md  # Code sharing techniques
+│   ├── LANGGRAPH_MIGRATION_V1.md         # Migration guide from LangGraph v0.6 to v1
+│   ├── TRANSPORT_COMPARISON.md           # Comparison of MCP transport protocols
+│   └── integration_test_mcp_json.md      # Detailed output from main demo
 ├── .mcp.json                  # External MCP server configuration
 ├── .env.example               # Environment variable template
 ├── pyproject.toml             # Project dependencies

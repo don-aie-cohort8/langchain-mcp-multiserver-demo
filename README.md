@@ -495,6 +495,13 @@ RuntimeError: Already running asyncio in this thread
 - [LangSmith Tracing](https://smith.langchain.com/)
 - [Example Trace: Migration Guidance](https://smith.langchain.com/public/be69829b-ae12-4d0d-a735-ce53853d1b45/r)
 
+### Educational Materials
+- **[Educational Examples Overview](examples/README.md)** - FastAPI → FastMCP → PydanticAI → FastA2A learning path
+- **[Weather Service Examples](examples/weather_service/README.md)** - Side-by-side implementation comparison
+- **[FastMCP/PydanticAI Comparison](docs/FASTMCP_PYDANTICAI_COMPARISON.md)** - Comprehensive technical comparison
+- **[MCP vs A2A Decision Guide](docs/MCP_VS_A2A_DECISION_GUIDE.md)** - When to use which protocol
+- **[Pydantic Model Reuse Patterns](docs/PYDANTIC_MODEL_REUSE_PATTERNS.md)** - Code sharing techniques across frameworks
+
 ### Additional Resources
 - [Architecture Documentation](architecture/README.md)
 - [Integration Test Output](docs/integration_test_mcp_json.md)
