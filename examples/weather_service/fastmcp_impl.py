@@ -36,7 +36,7 @@ from common.models import WeatherQuery, WeatherResponse, WeatherForecast
 mcp = FastMCP("Weather Service")
 
 
-@mcp.tool  # Compare to: @app.post("/weather", response_model=WeatherResponse)
+@mcp.tool()  # Compare to: @app.post("/weather", response_model=WeatherResponse)
 async def get_weather(query: WeatherQuery) -> WeatherResponse:  # Return type replaces response_model
     """
     Get weather information for a location.
@@ -123,11 +123,8 @@ if __name__ == "__main__":
         print(f"\nMCP endpoint: http://{args.host}:{args.port}/mcp")
         print(f"To discover tools: POST to /mcp with MCP list_tools message")
 
-        mcp.run(
-            transport="streamable-http",
-            host=args.host,
-            port=args.port
-        )
+        # Pass host and port as parameters to run() - correct FastMCP pattern
+        mcp.run(transport="streamable-http", host=args.host, port=args.port)
     else:
         print(f"Starting Weather Service (FastMCP) with {args.transport} transport")
         print(f"This transport is for subprocess/local integrations")

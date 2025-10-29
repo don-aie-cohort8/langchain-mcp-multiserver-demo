@@ -36,7 +36,7 @@ from common.models import CalculationRequest, CalculationResponse
 mcp = FastMCP("Calculator Service")
 
 
-@mcp.tool  # Compare to: @app.post("/calculate", response_model=CalculationResponse)
+@mcp.tool()  # Compare to: @app.post("/calculate", response_model=CalculationResponse)
 async def calculate(request: CalculationRequest) -> CalculationResponse:  # Return type replaces response_model
     """
     Perform a mathematical calculation.
@@ -110,22 +110,28 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    # Recreate FastMCP with correct host/port in constructor
+    mcp_configured = FastMCP(
+        "Calculator Service",
+        host=args.host,
+        port=args.port
+    )
+
+    # Re-register the tool with the new instance
+    mcp_configured.add_tool(calculate.__wrapped__)
+
     if args.transport == "streamable-http":
         print(f"Starting Calculator Service (FastMCP) on http://{args.host}:{args.port}/mcp")
         print(f"Transport: streamable-http (HTTP POST + Server-Sent Events)")
         print(f"\nMCP endpoint: http://{args.host}:{args.port}/mcp")
         print(f"To discover tools: POST to /mcp with MCP list_tools message")
 
-        mcp.run(
-            transport="streamable-http",
-            host=args.host,
-            port=args.port
-        )
+        mcp_configured.run(transport="streamable-http")
     else:
         print(f"Starting Calculator Service (FastMCP) with {args.transport} transport")
         print(f"This transport is for subprocess/local integrations")
 
-        mcp.run(transport=args.transport)
+        mcp_configured.run(transport=args.transport)
 
 
 # ============================================================================
