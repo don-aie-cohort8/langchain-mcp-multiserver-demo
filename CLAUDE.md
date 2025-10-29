@@ -8,6 +8,8 @@ This is an **educational demonstration** of integrating multiple Model Context P
 
 **Key Problem Solved**: Traditional AI agent frameworks struggle with integrating tools from diverse sources. This project demonstrates a clean, protocol-based approach where tools can be exposed via MCP servers and consumed uniformly by LangChain agents, regardless of the underlying transport.
 
+**Quick Entry Point**: Run `python clients/integration_test_mcp_json.py` (112 lines) to see the complete demo with Context7 documentation grounding. See [LangSmith trace](https://smith.langchain.com/public/be69829b-ae12-4d0d-a735-ce53853d1b45/r).
+
 ## Python Environment
 
 ### Setup
@@ -239,19 +241,26 @@ response = await agent.ainvoke({"messages": "What's 5 + 3?"})
 
 ### Display Response Pattern
 
-```python
-from clients.display_utils import display_agent_response, get_final_answer
+Three utility functions in `clients/display_utils.py` provide flexible response formatting:
 
+```python
+from clients.display_utils import display_agent_response, get_final_answer, print_tools_summary
+
+# 1. display_agent_response() - Show execution trace
 # Development/Debugging: Full trace with token usage
 display_agent_response(response, show_full_trace=True, show_token_usage=True)
 
 # Production: Minimal display (final answer only)
 display_agent_response(response, show_full_trace=False)
 
-# Automated Pipelines: Programmatic extraction
+# 2. get_final_answer() - Programmatic extraction (no output)
 answer = get_final_answer(response)
 if "8" in answer:
     proceed_with_next_step()
+
+# 3. print_tools_summary() - List discovered tools
+tools = await client.get_tools()
+print_tools_summary(tools)  # Shows tool names and descriptions
 ```
 
 ### MCP Server Subprocess Spawning Pattern
@@ -338,13 +347,26 @@ External MCP servers are configured in `.mcp.json`:
 
 ## Integration with Cursor Rules
 
-This repository includes Cursor rules in `.cursor/rules/`:
+This repository includes Cursor rules in `.cursor/rules/` for context-aware AI assistance:
 
-- **mcp-langgraph-context.mdc** - MCP and LangGraph integration patterns
-- **llm-stack-alignment.mdc** - LLM stack component mapping
-- **repo-storytelling-suite.mdc** - Repository storytelling and documentation generation
+- **mcp-langgraph-context.mdc** - Provides assistance for:
+  - Extracting and visualizing LangGraph workflows with Mermaid diagrams
+  - Creating MCP server/tool inventories with authentication requirements
+  - Documenting integration patterns, error handling, and retry logic
+  - Generating architecture summaries that cross-reference MCP tools with graph nodes
 
-These rules guide context-aware assistance for MCP server development, LangGraph orchestration, and architecture documentation.
+- **repo-storytelling-suite.mdc** - Automates documentation generation:
+  - Project context capture (problem, audience, goals, stack)
+  - Architecture deep dives with diagrams and data flows
+  - Presentation slides (7-9 slides for 5-min walkthrough)
+  - Video scripts with screen/demo cues
+  - LinkedIn posts and learning reflections
+  - Output directory: `storytelling/output/`
+  - Template directory: `storytelling/templates/`
+
+- **llm-stack-alignment.mdc** - LLM stack component mapping (not detailed here)
+
+These rules enable automated generation of documentation, presentations, and reflections from the codebase.
 
 ## Troubleshooting
 
@@ -407,7 +429,21 @@ to create the actual file. Do not just describe what you would write.
 - **Python Version**: >=3.13
 - **License**: (Same as parent project)
 
+## Important Migration Context
+
+**LangGraph v1 → LangChain v1 Migration (October 2025)**
+
+This project uses **LangChain 1.0+** and **LangGraph 1.0+**. Key changes:
+
+| Before (v0.6.7) | After (v1.0+) |
+|-----------------|---------------|
+| `from langgraph.prebuilt import create_react_agent` | `from langchain.agents import create_agent` |
+| `agent = create_react_agent(model, tools)` | `agent = create_agent("openai:gpt-4.1", tools)` |
+
+**All code in this repo uses the v1.0+ patterns.** See `docs/LANGGRAPH_MIGRATION_V1.md` for complete migration details.
+
 ## Notes
 
 - `ra_*` directories are excluded from git (see `.gitignore`) and contain the Repository Analyzer Framework
 - Generated architecture documentation in `architecture/` may reference internal implementation details from the `langchain-mcp-adapters` library (e.g., `sessions.py` is part of that library, not this repo)
+- When creating new agents, always use `from langchain.agents import create_agent` (not the deprecated `langgraph.prebuilt.create_react_agent`)

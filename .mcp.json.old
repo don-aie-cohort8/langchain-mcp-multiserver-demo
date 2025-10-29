@@ -32,9 +32,13 @@
         "mcpdoc",
         "mcpdoc",
         "--urls",
-        "PydanticAI:https://ai.pydantic.dev/llms.txt",
-        "--urls",        
+        "MCPProtocol:https://modelcontextprotocol.io/llms.txt",
+        "--urls",
         "FastMCP:https://gofastmcp.com/llms.txt",
+        "--urls",
+        "LangChain:https://python.langchain.com/llms.txt",
+        "--urls",
+        "LangGraph:https://langchain-ai.github.io/langgraph/llms.txt",
         "--urls",
         "Anthropic:https://docs.anthropic.com/llms.txt",
         "--transport",
@@ -43,9 +47,11 @@
         "--timeout",
         "20",
         "--allowed-domains",
-        "ai.pydantic.dev",
-        "gofastmcp.com",
-        "docs.anthropic.com"
+        "modelcontextprotocol.io",
+        "python.langchain.com",
+        "langchain-ai.github.io",
+        "docs.anthropic.com",
+        "gofastmcp.com"
       ]
     },
     "ai-docs-server-full": {
@@ -55,9 +61,13 @@
         "mcpdoc",
         "mcpdoc",
         "--urls",
-        "PydanticAIFull:https://ai.pydantic.dev/llms-full.txt",
+        "McpProtocolFull:https://modelcontextprotocol.io/llms-full.txt",
         "--urls",
         "FastMCPFull:https://gofastmcp.com/llms-full.txt",
+        "--urls",
+        "LangChain:https://python.langchain.com/llms-full.txt",
+        "--urls",
+        "LangGraphFull:https://langchain-ai.github.io/langgraph/llms-full.txt",
         "--urls",
         "AnthropicFull:https://docs.anthropic.com/llms-full.txt",
         "--transport",
@@ -66,9 +76,11 @@
         "--timeout",
         "20",
         "--allowed-domains",
-        "ai.pydantic.dev",
-        "gofastmcp.com",
-        "docs.anthropic.com"
+        "modelcontextprotocol.io",
+        "python.langchain.com",
+        "langchain-ai.github.io",
+        "docs.anthropic.com",
+        "gofastmcp.com"
       ]
     }
   }
